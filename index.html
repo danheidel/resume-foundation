@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width" />
+   <title>Dan Heidel's stuff</title>
+  
+   <link rel="stylesheet" href="css/normalize.css" />
+   <link rel="stylesheet" href="css/foundation.css" />
+   <link rel="stylesheet" href="css/app.css" />
+   <link rel="stylesheet" href="css/font-awesome.min.css">
+
+  <script src="js/vendor/custom.modernizr.js"></script>
+
+</head>
+<body>
+   <canvas id="background-canvas">
+
+   </canvas>
+	<div class="row">
+		<div class="large-12 columns">
+         <div class="title-header">
+   			<h2>Dan Heidel's Stuff</h2>
+   			<p id="sub-title">And things, but mostly stuff</p>
+         </div>
+		</div>
+	</div>
+
+   <div class="sticky">
+      <nav class="top-bar">
+        <ul class="title-area">
+          <!-- Title Area -->
+          <li class="name">
+          <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+          <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+        </ul>
+
+        <section class="top-bar-section">
+          <!-- Left Nav Section -->
+          <ul class="left">
+            <li><a href="#"><i class="icon-home icon-2x"></i></a></li>
+            <!--<li><a href="#blog">Blog</a></li>-->
+            <li class="has-dropdown"><a href="#install">Artwork</a>
+               <ul class="dropdown">
+                  <li>
+                     <a href="#inst-rain" style="text-align: center">
+                        <img src="img/rainshow-thumb.png" class="top-bar-image">
+                        <br>Rain Showers
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#inst-contact" style="text-align: center">
+                        <img src="img/contact thumbnail.png" class="top-bar-image">
+                        <br>Contact
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#inst-dynamik" style="text-align: center">
+                        <img src="img/dynamicspace thumbnail.png" class="top-bar-image">
+                        <br>DynamikSpace
+                     </a>
+                  </li>
+                  <li>
+                     <a href="#inst-finn" style="text-align: center">
+                        <img src="img/finnhill thumbnail.png" class="top-bar-image">
+                        <br>Finn Hill
+                     </a>
+                  </li>
+               </ul>
+            </li>
+            <li class="has-dropdown"><a href="#electronics">Electronics</a>
+              <ul class="dropdown">
+                <li><a href="#electronics">Coming soon!</a></li>
+              </ul>
+            </li>
+            <li><a href="#cv">CV</a></li>
+          </ul>
+          <ul class="right">
+            <li class="has-dropdown"><a href="#"><i class="icon-envelope icon-large"></i></a>
+               <ul class="dropdown">
+                  <li><a href="" style="text-align: center"><i class="icon-envelope icon-2x"></i></a>
+                  </li>
+                  <li>
+                     <a href="https://github.com/danheidel" target="_blank" style="text-align: center">
+                        <i class="icon-github-sign icon-3x"></i>
+                     </a>
+                  </li>
+                  <li><a href="https://twitter.com/dan_heidel" target="_blank" style="text-align: center"><i class="icon-twitter-sign icon-3x"></i></a>
+                  </li>
+                  <li><a href="https://www.linkedin.com/profile/view?id=43637762twitter" target="_blank" style="text-align: center"><i class="icon-linkedin-sign icon-3x"></i></a>
+                  </li>
+               </ul>
+            </li>
+            <li class="has-dropdown"><a href="#"><i class="icon-info icon-large"></i></a>
+               <ul class="dropdown">
+                  <li class="divider">
+                     <div class="panel top-bar">
+                        <p>This is a place to showcase some of ths stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
+
+                        <h1> test123 </h1><h2> </h2>
+                     </div>
+                  </li>
+               </ul>
+            </li>
+            <li>
+               <a href="#"><i class="icon-minus-sign-alt icon-large"></i></a>
+            </li>
+          </ul>
+        </section>
+      </nav>
+   </div>
+
+	<div class="row">
+		<div class="large-8 columns">
+         <div class="panel">
+   			<h3>The Grid</h3>
+         </div>
+		</div>
+
+		<div class="large-4 columns">
+         <div class="panel">
+			   <h4>Getting Started</h4>
+         </div>
+		</div>
+	</div>
+        
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+  <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
+  <!-- -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+  <script>window._ || document.write('<script src="js/vendor/underscore-1.4.4.js"><\/script')</script>
+  <!-- -->        
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+  <script>window.Backbone || document.write('<script src="js/vendor/backbone-1.0.0.js"><\/script')</script>
+  <!-- -->    
+
+  <script src="js/foundation/foundation.js"></script>
+  <!--
+  <script src="js/foundation.min.js"></script>
+  <script src="js/foundation/foundation.alerts.js"></script>  
+  <script src="js/foundation/foundation.clearing.js"></script>  
+  <script src="js/foundation/foundation.cookie.js"></script>  
+  <script src="js/foundation/foundation.dropdown.js"></script>  
+  <script src="js/foundation/foundation.forms.js"></script>  
+  <script src="js/foundation/foundation.joyride.js"></script>  
+  <script src="js/foundation/foundation.magellan.js"></script>  
+  <script src="js/foundation/foundation.orbit.js"></script>  
+  <script src="js/foundation/foundation.reveal.js"></script>  
+  <script src="js/foundation/foundation.section.js"></script>  
+  <script src="js/foundation/foundation.tooltips.js"></script>
+  -->
+  <script src="js/foundation/foundation.topbar.js"></script>
+  <!--
+  <script src="js/foundation/foundation.interchange.js"></script>  
+  <script src="js/foundation/foundation.placeholder.js"></script>  
+  -->
+
+  <script src="js/RaFlib.js"></script>
+  <script src="js/bgAnim.js"></script>
+  
+  <script>
+   $(document).foundation();
+   $(function($){
+      //window.myCanvas = $('#background-canvas');
+      window.myCanvas = document.getElementById("background-canvas");
+      window.myCtx = myCanvas.getContext('2d');
+
+      function resizeCanvas(){
+         myCanvas.width = ($(this).innerWidth());
+         myCanvas.height = ($(this).innerHeight());
+         myCtx.imageData = myCtx.getImageData(0,0, myCanvas.width, myCanvas.height);
+         myCtx.gArray = myCtx.imageData.data; // data is a Uint8ClampedArray
+         myCtx.fillStyle = "rgb(100,0,0)";
+         myCtx.fillRect(0, 0, myCanvas.width, myCanvas.height);
+      };
+      resizeCanvas();
+
+      bgVars.initBgVars(myCanvas, myCtx);
+
+      window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 40); 
+      intervalHandle.oldTime = Date.now();
+      intervalHandle.timeDelta = 0;
+      intervalHandle.updateTime = 0;
+
+      function updateCanvas(){
+         //calculate time delta
+         intervalHandle.timeDelta = Date.now() - intervalHandle.oldTime;
+         $('#sub-title').text(Date.now() + "   delta: " + intervalHandle.timeDelta + "   FPS: " + (1/(intervalHandle.timeDelta/1000)).toPrecision(4));
+         intervalHandle.oldTime = Date.now();
+         bgVars.updateBgCanvas();
+      }
+
+      $(window).on({
+         resize: function(event){
+            resizeCanvas();
+            bgVars.initBgVars(myCanvas, myCtx);
+         }
+      }, window);
+
+      var oRouter = Backbone.Router.extend({
+         routes: {
+            "": "goHome",
+            "blog":  "goBlog",
+            "install":  "goInstall",
+            "inst-rain": "goInstRain",
+            "inst-contact": "goInstContact",
+            "inst-dynamik": "goInstDynamik",
+            "inst-finn": "goInstFinn",
+            "electronics": "goElectronics",
+            "cv": "goCV"
+         },
+         goHome: function(){
+         },
+         goBlog: function(){
+            alert('blog');
+         },
+         goInstall: function(){
+            alert("install");
+         },
+         goInstRain: function(){
+            alert("Rain Showers");
+         },
+         goInstContact: function(){
+            alert("Contact");
+         },
+         goInstDynamik: function(){
+            alert("DynamikSpace");
+         },
+         goInstFinn: function(){
+            alert("Finn Hill");
+         },
+         goElectronics: function(){
+            alert("Electronics");
+         },
+         goCV: function(){
+            alert("CV");
+         }
+
+      });
+      window.myRouter = new oRouter;
+      Backbone.history.start();
+   });
+
+  </script>
+</body>
+</html>
