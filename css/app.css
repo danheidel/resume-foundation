@@ -3,9 +3,9 @@ body{
 }
 .title-header{
    background-color: #aaa;
-   padding-left: 5em;
+   padding-left: 10%;
    border-radius:6px 6px 0px 0px;
-   box-shadow: inset 5px 5px 3px 1px #ccc; 
+   box-shadow: inset 5px 5px 5px 1px #ccc; 
 }
 p { 
    line-height: 1.5; 
@@ -37,6 +37,7 @@ canvas{
 .panel{ 
    margin: .2em;
    padding: .2em; 
+   border-radius: 4px 4px 4px 4px;
 }
 .panel.noedge{
    margin: 0em;
@@ -77,6 +78,12 @@ canvas{
 }*/
 .top-bar-section ul li.hover > a {
    background: #722;
+}
+.panel.top-bar > p {
+  color:#aaa;
+}
+.panel.top-bar > h1, .panel.top-bar > h2, .panel.top-bar > h3 {
+  color: #aaa;
 }
 .top-bar-image {
    display: block;

@@ -20,7 +20,7 @@
 
    </canvas>
 	<div class="row">
-		<div class="large-12 columns">
+		<div class="small-12 large-7 columns hide-for-small">
          <div class="title-header">
    			<h2>Dan Heidel's Stuff</h2>
    			<p id="sub-title">And things, but mostly stuff</p>
@@ -28,7 +28,7 @@
 		</div>
 	</div>
 
-   <div class="sticky">
+   <div class="sticky" id="sticky-thing">
       <nav class="top-bar">
         <ul class="title-area">
           <!-- Title Area -->
@@ -42,7 +42,7 @@
           <ul class="left">
             <li><a href="#" id="home-menu"><i class="icon-home icon-2x"></i></a></li>
             <!--<li><a href="#blog">Blog</a></li>-->
-            <li class="has-dropdown" id="artwork-menu"><a href="#install">Artwork</a>
+            <li class="has-dropdown" id="artwork-menu"><a href="#art-main">Artwork</a>
                <ul class="dropdown">
                   <li>
                      <a href="#art-rain" style="text-align: center">
@@ -99,7 +99,7 @@
                      <div class="panel top-bar">
                         <p>This is a place to showcase some of ths stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
 
-                        <h1> test123 </h1><h2> </h2>
+                        <h1> test123 </h1>
                      </div>
                   </li>
                </ul>
@@ -112,58 +112,163 @@
       </nav>
    </div>
 
-	<div class="row" id="main-content">
-		<div class="large-8 columns">
-         <div class="panel">
-   			<h3>The Grid</h3>
-         </div>
-		</div>
-
-		<div class="large-4 columns">
-         <div class="panel">
-			   <h4>Getting Started</h4>
-         </div>
-		</div>
-	</div>
+	<div class="row" id="main-content"></div>
         
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-  <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
-  <!-- -->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-  <script>window._ || document.write('<script src="js/vendor/underscore-1.4.4.js"><\/script')</script>
-  <!-- -->        
-  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
-  <script>window.Backbone || document.write('<script src="js/vendor/backbone-1.0.0.js"><\/script')</script>
-  <!-- -->    
+   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+   <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
+   <!-- -->
+   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+   <script>window._ || document.write('<script src="js/vendor/underscore-1.4.4.js"><\/script')</script>
+   <!-- -->        
+   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+   <script>window.Backbone || document.write('<script src="js/vendor/backbone-1.0.0.js"><\/script')</script>
+   <!-- -->    
+   <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.min.js"></script>
+   <script>window.Handlebars || document.write('<script src="js/vendor/handlebars-1.0.0.js"><\/script')</script>
+   <!-- -->    
 
-  <script src="js/foundation/foundation.js"></script>
-  <!--
-  <script src="js/foundation.min.js"></script>
-  <script src="js/foundation/foundation.alerts.js"></script>  
-  <script src="js/foundation/foundation.clearing.js"></script>  
-  <script src="js/foundation/foundation.cookie.js"></script>  
-  <script src="js/foundation/foundation.dropdown.js"></script>  
-  <script src="js/foundation/foundation.forms.js"></script>  
-  <script src="js/foundation/foundation.joyride.js"></script>  
-  <script src="js/foundation/foundation.magellan.js"></script>  
-  <script src="js/foundation/foundation.orbit.js"></script>  
-  <script src="js/foundation/foundation.reveal.js"></script>  
-  <script src="js/foundation/foundation.section.js"></script>  
-  <script src="js/foundation/foundation.tooltips.js"></script>
-  -->
-  <script src="js/foundation/foundation.topbar.js"></script>
-  <!--
-  <script src="js/foundation/foundation.interchange.js"></script>  
-  <script src="js/foundation/foundation.placeholder.js"></script>  
-  -->
+   <script src="js/foundation/foundation.js"></script>
+   <!--
+   <script src="js/foundation.min.js"></script>
+   <script src="js/foundation/foundation.alerts.js"></script>  
+   <script src="js/foundation/foundation.clearing.js"></script>  
+   <script src="js/foundation/foundation.cookie.js"></script>  
+   <script src="js/foundation/foundation.dropdown.js"></script>  
+   <script src="js/foundation/foundation.forms.js"></script>  
+   <script src="js/foundation/foundation.joyride.js"></script>  
+   <script src="js/foundation/foundation.magellan.js"></script>  
+   <script src="js/foundation/foundation.orbit.js"></script>  
+   <script src="js/foundation/foundation.reveal.js"></script>  
+   <script src="js/foundation/foundation.section.js"></script>  
+   <script src="js/foundation/foundation.tooltips.js"></script>
+   -->
+   <script src="js/foundation/foundation.topbar.js"></script>
+   <!--
+   <script src="js/foundation/foundation.interchange.js"></script>  
+   <script src="js/foundation/foundation.placeholder.js"></script>  
+   -->
 
-  <script src="js/RaFlib.js"></script>
-  <script src="js/bgAnim.js"></script>
-  
-  <script>
+   <script src="js/RaFlib.js"></script>
+   <script src="js/bgAnim.js"></script>
+
+   <script id="main-template" type="text/x-handlebars-template">
+      <div class="large-4 push-8 columns">
+         <div class="panel" id="main-panel">
+            <h3>{{minor-title}}</h3>
+            {{#each minor-text}}
+               <p>{{this}}</p>
+            {{/each}}
+         </div>
+      </div>
+      <div class="large-8 pull-4 columns">         
+         <div class="panel" id="minor-panel">
+            <h3>{{main-title}}</h3>
+            {{#each main-text}}
+               <p>{{this}}</p>
+            {{/each}}
+         </div>
+      </div>
+   </script>
+
+   <script>
    $(document).foundation();
    $(function($){
       window.pageVars = {};
+
+      var oGridContent = Backbone.Model.extend({
+         defaults:{
+            mainHeade: "",
+            mainContent: "",
+            minorHeader: "",
+            minorContent: "",
+         }
+      })
+
+      pageVars.gridContent = new oGridContent;
+
+      var oGridView = Backbone.View.extend({
+         el: "#main-content",
+         model: pageVars.gridContent,
+         defaults: {
+            mainSource: "",
+            mainTemplate: "",
+            mainContext: "",
+            mainHTML: ""
+         },
+         initialize: function(){
+            this.mainSource = $('#main-template').html();
+            this.mainTemplate = Handlebars.compile(this.mainSource);
+            this.listenTo(this.model, "change", this.render);
+         },
+         render: function(){
+            this.mainContext = {
+               "main-title": this.model.get("mainHeader"),
+               "main-text": this.model.get("mainContent"),
+               "minor-title": this.model.get("minorHeader"),
+               "minor-text": this.model.get("minorContent")
+            };
+            this.mainHTML = this.mainTemplate(this.mainContext);
+            this.el.innerHTML = this.mainHTML;
+            return this;
+         }
+      });
+
+      pageVars.gridView = new oGridView;
+
+      var oRouter = Backbone.Router.extend({
+         routes: {
+            "": "goHome",
+            "blog":  "goBlog",
+            "art-main":  "goArtMain",
+            "art-rain": "goArtRain",
+            "art-contact": "goArtContact",
+            "art-dynamik": "goArtDynamik",
+            "art-finn": "goArtFinn",
+            "electronics": "goElectronics",
+            "cv": "goCV"
+         },
+         goHome: function(){
+            var mainData = {
+               mainHeader: "This is the header",
+               mainContent: ["This is the main area via Backbone."],
+               minorHeader: "This is also the title",
+               minorContent: [
+                  "This is the secondary area via Backbone.",
+                  "This is the second paragraph",
+                  "This is the third paragraph"
+                  ]
+            };
+            pageVars.gridContent.set(mainData);
+         },
+         goBlog: function(){
+         },
+         goArtMain: function(){
+            var artData = {
+               mainHeader: "Installation art pieces",
+               mainContent: [
+                  "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee.",
+                  "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the physical design and construction of the piece.  "
+                  ]
+            };
+            pageVars.gridContent.set(artData);
+         },
+         goArtRain: function(){
+         },
+         goArtContact: function(){
+         },
+         goArtDynamik: function(){
+         },
+         goArtFinn: function(){
+         },
+         goElectronics: function(){
+         },
+         goCV: function(){
+         }
+
+      });
+      window.myRouter = new oRouter;
+      Backbone.history.start();
+
       window.myCanvas = document.getElementById("background-canvas");
       window.myCtx = myCanvas.getContext('2d');
 
@@ -196,6 +301,13 @@
          resize: function(event){
             resizeCanvas();
             bgVars.initBgVars(myCanvas, myCtx);
+            //kludge to fix Foundation top bar behavior
+            if (myCanvas.width<=768 && $('#sticky-thing').hasClass('sticky')){ 
+               $("#sticky-thing").removeClass('sticky');
+            }
+            if (myCanvas.width>768 && !$('#sticky-thing').hasClass('sticky')){ 
+               $("#sticky-thing").addClass('sticky');
+            }
          }
       }, window);
 
@@ -223,50 +335,8 @@
                $("#info-menu").show(500);
             }
          }
-      })
-
-      var oRouter = Backbone.Router.extend({
-         routes: {
-            "": "goHome",
-            "blog":  "goBlog",
-            "install":  "goInstall",
-            "art-rain": "goInstRain",
-            "art-contact": "goInstContact",
-            "art-dynamik": "goInstDynamik",
-            "art-finn": "goInstFinn",
-            "electronics": "goElectronics",
-            "cv": "goCV"
-         },
-         goHome: function(){
-         },
-         goBlog: function(){
-            alert('blog');
-         },
-         goInstall: function(){
-            alert("install");
-         },
-         goInstRain: function(){
-            alert("Rain Showers");
-         },
-         goInstContact: function(){
-            alert("Contact");
-         },
-         goInstDynamik: function(){
-            alert("DynamikSpace");
-         },
-         goInstFinn: function(){
-            alert("Finn Hill");
-         },
-         goElectronics: function(){
-            alert("Electronics");
-         },
-         goCV: function(){
-            alert("CV");
-         }
-
       });
-      window.myRouter = new oRouter;
-      Backbone.history.start();
+
    });
 
   </script>

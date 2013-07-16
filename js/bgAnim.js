@@ -125,7 +125,6 @@
          "boid": {
             x:0,
             y:0,
-            
          },
          "initBgVars" : function(iCanvas, iCtx){
 
