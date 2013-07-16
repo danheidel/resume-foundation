@@ -1,5 +1,5 @@
 (function selectBG(){
-   var selector = Math.floor(Math.random() * 2);
+   var selector = Math.floor(Math.random() * 1);
    if(selector == 0){
       //set up vars for game of life
       window.bgVars = {
