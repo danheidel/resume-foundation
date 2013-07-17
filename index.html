@@ -96,8 +96,8 @@
             <li class="has-dropdown" id="info-menu"><a href="#"><i class="icon-info icon-large"></i></a>
                <ul class="dropdown">
                   <li class="divider">
-                     <div class="panel top-bar">
-                        <p>This is a place to showcase some of ths stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
+                     <div class="panel top-bar" id="about-content">
+                        <p>This is a place to showcase some of the stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
 
                         <h1> test123 </h1>
                      </div>
@@ -105,7 +105,7 @@
                </ul>
             </li>
             <li>
-               <a href="#" id="hideAll"><i class="icon-minus-sign-alt icon-large"></i></a>
+               <a id="hideAll"><i class="icon-minus-sign-alt icon-large"></i></a>
             </li>
           </ul>
         </section>
@@ -113,22 +113,6 @@
    </div>
 
 	<div class="row" id="main-content"><!--templated data goes here--></div>
-   
-   <ul data-orbit>
-      <li>
-         <img src="img/contact part3_lbox.jpg" >
-         <div class="orbit-caption"> caption 1</div>
-      </li>
-      <li>
-         <img src="img/contact part4_lbox.jpg" >
-         <div class="orbit-caption">caption 1</div>
-      </li>
-      <li>
-         <img src="img/contact part5_lbox.jpg" >
-         <div class="orbit-caption">caption 1"</div>
-      </li>
-   </ul>
-   
    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
    <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
    <!-- -->
@@ -170,7 +154,7 @@
 
    <script id="main-template" type="text/x-handlebars-template">
       <div class="large-4 push-8 columns">
-         <div class="panel" id="main-panel">
+         <div class="panel" id="minor-panel">
             {{#if minor-title}}
                <h3>{{minor-title}}</h3>
             {{/if}}
@@ -180,7 +164,7 @@
          </div>
       </div>
       <div class="large-8 pull-4 columns">         
-         <div class="panel" id="minor-panel">
+         <div class="panel" id="main-panel">
             {{#if main-title}}
                <h3>{{main-title}}</h3>
             {{/if}}
@@ -199,6 +183,10 @@
             {{/if}}
          </div>
       </div>
+   </script>
+
+   <script id="about-template" type="text/handlebars-template">
+
    </script>
 
    <script>
@@ -261,16 +249,18 @@
             "cv": "goCV"
          },
             // var Data = {
-            //    mainHeader : "",
-            //    mainContent : [],
-            //    minorHeader : "",
-            //    minorContent : []
+            //    mainHeader: "",
+            //    mainContent: [],
+            //    mainCarosel: [],
+            //    minorHeader: "",
+            //    minorContent: []
             // };
             // pageVars.gridContent.set();
          goHome: function(){
             var mainData = {
                mainHeader: "This is the header",
                mainContent: ["This is the main area via Backbone."],
+               mainCarosel: [],
                minorHeader: "This is also the title",
                minorContent: [
                   "This is the secondary area via Backbone.",
@@ -287,10 +277,11 @@
                mainHeader: "Installation art pieces",
                mainContent: [
                   ],
+               mainCarosel: [],
                minorHeader: "",
                minorContent: [
                   "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee.",
-                  "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the physical design and construction of the piece.  "]
+                  "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the complete physical design and construction of the piece.  "]
             };
             pageVars.gridContent.set(artData);
          },
@@ -298,10 +289,18 @@
             var rainData = {
                mainHeader : "Rain Showers",
                mainContent : [],
+               mainCarosel: [{
+                  src: "img/rainshower1.jpg",
+                  caption: "Rain showers"},{
+                  src: "img/rainshower2.jpg",
+                  caption: "Rain showers"},{
+                  src:" img/rainshower3.jpg",
+                  caption: "Rain Showers"}],
                minorHeader : "",
                minorContent : []
             };
             pageVars.gridContent.set(rainData);
+            Foundation.libs.orbit.init();
          },
          goArtContact: function(){
             var contactData = {
@@ -320,29 +319,43 @@
                minorContent : []
             };
             pageVars.gridContent.set(contactData);
+            Foundation.libs.orbit.init();
          },
          goArtDynamik: function(){
             var dynamikData = {
                mainHeader : "DynamikSpace installation",
                mainContent : [],
+               mainCarosel: [{
+                  src: "img/dynamicspace1.jpg",
+                  caption: "Dynamicspace"},{
+                  src: "img/dynamicspace2.jpg",
+                  caption: "Dynamicspace"}],
                minorHeader : "",
                minorContent : []
             };
             pageVars.gridContent.set(dynamikData);
+            Foundation.libs.orbit.init();
          },
          goArtFinn: function(){
             var finnData = {
                mainHeader : "Finn Hill Junior High",
                mainContent : [],
+               mainCarosel: [{
+                  src: "img/finnhill sculpture1 sm.jpg",
+                  caption: "Finn Hill"},{
+                  src: "img/finnhill sculpture4 sm.jpg",
+                  caption: "Finn Hill"}],
                minorHeader : "",
                minorContent : []
             };
             pageVars.gridContent.set(finnData);
+            Foundation.libs.orbit.init();
          },
          goElectronics: function(){
             var electronicsData = {
                mainHeader : "My electronics work",
                mainContent : [],
+               mainCarosel: [],
                minorHeader : "",
                minorContent : []
             };
@@ -352,6 +365,7 @@
             var cvData = {
                mainHeader : "My resume",
                mainContent : [],
+               mainCarosel: [],
                minorHeader : "",
                minorContent : []
             };
