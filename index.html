@@ -112,8 +112,23 @@
       </nav>
    </div>
 
-	<div class="row" id="main-content"></div>
-        
+	<div class="row" id="main-content"><!--templated data goes here--></div>
+   
+   <ul data-orbit>
+      <li>
+         <img src="img/contact part3_lbox.jpg" >
+         <div class="orbit-caption"> caption 1</div>
+      </li>
+      <li>
+         <img src="img/contact part4_lbox.jpg" >
+         <div class="orbit-caption">caption 1</div>
+      </li>
+      <li>
+         <img src="img/contact part5_lbox.jpg" >
+         <div class="orbit-caption">caption 1"</div>
+      </li>
+   </ul>
+   
    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
    <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
    <!-- -->
@@ -137,7 +152,9 @@
    <script src="js/foundation/foundation.forms.js"></script>  
    <script src="js/foundation/foundation.joyride.js"></script>  
    <script src="js/foundation/foundation.magellan.js"></script>  
+   -->
    <script src="js/foundation/foundation.orbit.js"></script>  
+   <!--
    <script src="js/foundation/foundation.reveal.js"></script>  
    <script src="js/foundation/foundation.section.js"></script>  
    <script src="js/foundation/foundation.tooltips.js"></script>
@@ -154,7 +171,9 @@
    <script id="main-template" type="text/x-handlebars-template">
       <div class="large-4 push-8 columns">
          <div class="panel" id="main-panel">
-            <h3>{{minor-title}}</h3>
+            {{#if minor-title}}
+               <h3>{{minor-title}}</h3>
+            {{/if}}
             {{#each minor-text}}
                <p>{{this}}</p>
             {{/each}}
@@ -162,10 +181,22 @@
       </div>
       <div class="large-8 pull-4 columns">         
          <div class="panel" id="minor-panel">
-            <h3>{{main-title}}</h3>
+            {{#if main-title}}
+               <h3>{{main-title}}</h3>
+            {{/if}}
             {{#each main-text}}
                <p>{{this}}</p>
             {{/each}}
+            {{#if main-carosel}}
+               <ul data-orbit>
+                  {{#each main-carosel}}
+                     <li>
+                        <img src="{{this.src}}" />
+                        <div class="orbit-caption">{{this.caption}}</div>
+                     </li>
+                  {{/each}}
+               </ul>
+            {{/if}}
          </div>
       </div>
    </script>
@@ -178,9 +209,10 @@
       var oGridContent = Backbone.Model.extend({
          defaults:{
             mainHeade: "",
-            mainContent: "",
+            mainContent: [],
+            mainCarosel: [],
             minorHeader: "",
-            minorContent: "",
+            minorContent: [],
          }
       })
 
@@ -204,6 +236,7 @@
             this.mainContext = {
                "main-title": this.model.get("mainHeader"),
                "main-text": this.model.get("mainContent"),
+               "main-carosel": this.model.get("mainCarosel"),
                "minor-title": this.model.get("minorHeader"),
                "minor-text": this.model.get("minorContent")
             };
@@ -227,6 +260,13 @@
             "electronics": "goElectronics",
             "cv": "goCV"
          },
+            // var Data = {
+            //    mainHeader : "",
+            //    mainContent : [],
+            //    minorHeader : "",
+            //    minorContent : []
+            // };
+            // pageVars.gridContent.set();
          goHome: function(){
             var mainData = {
                mainHeader: "This is the header",
@@ -246,23 +286,76 @@
             var artData = {
                mainHeader: "Installation art pieces",
                mainContent: [
+                  ],
+               minorHeader: "",
+               minorContent: [
                   "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee.",
-                  "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the physical design and construction of the piece.  "
-                  ]
+                  "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the physical design and construction of the piece.  "]
             };
             pageVars.gridContent.set(artData);
          },
          goArtRain: function(){
+            var rainData = {
+               mainHeader : "Rain Showers",
+               mainContent : [],
+               minorHeader : "",
+               minorContent : []
+            };
+            pageVars.gridContent.set(rainData);
          },
          goArtContact: function(){
+            var contactData = {
+               mainHeader : "Contact",
+               mainContent : [],
+               mainCarosel: [{
+                  src: "img/contact part3_lbox.jpg",
+                  caption: "caption 1"},{
+                  src: "img/contact part4_lbox.jpg",
+                  caption: "caption 1"},{
+                  src: "img/contact part5_lbox.jpg",
+                  caption: "caption 1"},{
+                  src: "img/contact part6_lbox.jpg",
+                  caption: "caption 1"}],
+               minorHeader : "",
+               minorContent : []
+            };
+            pageVars.gridContent.set(contactData);
          },
          goArtDynamik: function(){
+            var dynamikData = {
+               mainHeader : "DynamikSpace installation",
+               mainContent : [],
+               minorHeader : "",
+               minorContent : []
+            };
+            pageVars.gridContent.set(dynamikData);
          },
          goArtFinn: function(){
+            var finnData = {
+               mainHeader : "Finn Hill Junior High",
+               mainContent : [],
+               minorHeader : "",
+               minorContent : []
+            };
+            pageVars.gridContent.set(finnData);
          },
          goElectronics: function(){
+            var electronicsData = {
+               mainHeader : "My electronics work",
+               mainContent : [],
+               minorHeader : "",
+               minorContent : []
+            };
+            pageVars.gridContent.set(electronicsData);
          },
          goCV: function(){
+            var cvData = {
+               mainHeader : "My resume",
+               mainContent : [],
+               minorHeader : "",
+               minorContent : []
+            };
+            pageVars.gridContent.set(cvData);
          }
 
       });
