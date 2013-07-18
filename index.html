@@ -97,6 +97,9 @@
                <ul class="dropdown">
                   <li class="divider">
                      <div class="panel top-bar" id="about-content">
+                        <a href="construction.html" data-reveal-id="construction-modal" data-reveal-ajax="true">
+                           <img src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
+                        </a>
                         <p>This is a place to showcase some of the stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
 
                         <h1> test123 </h1>
@@ -138,8 +141,8 @@
    <script src="js/foundation/foundation.magellan.js"></script>  
    -->
    <script src="js/foundation/foundation.orbit.js"></script>  
-   <!--
    <script src="js/foundation/foundation.reveal.js"></script>  
+   <!--
    <script src="js/foundation/foundation.section.js"></script>  
    <script src="js/foundation/foundation.tooltips.js"></script>
    -->
@@ -258,10 +261,10 @@
             // pageVars.gridContent.set();
          goHome: function(){
             var mainData = {
-               mainHeader: "This is the header",
+               mainHeader: "Hey, I'm Dan, this is my stuff!",
                mainContent: ["This is the main area via Backbone."],
                mainCarosel: [],
-               minorHeader: "This is also the title",
+               minorHeader: "Who the hell is Dan?",
                minorContent: [
                   "This is the secondary area via Backbone.",
                   "This is the second paragraph",
@@ -443,9 +446,11 @@
             }
          }
       });
-
    });
 
-  </script>
+   </script>
+
+   <div id="construction-modal" class="reveal-modal">
+   </div>
 </body>
 </html>

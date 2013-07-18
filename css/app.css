@@ -91,7 +91,7 @@ canvas{
    margin-right: auto;
 }
 .orbit-container {
-  border-radius: 3px 3px 3px 3px;
+  border-radius: 4px 4px 4px 4px;
   background-color: #111;
 }
 .orbit-container .orbit-slides-container img {
