@@ -76,6 +76,9 @@ canvas{
     height: 5px;
    }
 }*/
+.top-bar-section ul li div > a {
+  color: white; 
+}
 .top-bar-section ul li.hover > a {
    background: #722;
 }

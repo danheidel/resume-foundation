@@ -97,6 +97,11 @@
 
             _Ctx.putImageData(_Ctx.imageData, 0, 0);
          },
+         "userInput": function(iX, iY){
+            var gridX = Math.round(iX / this.xBlockSize);
+            var gridY = Math.round(iY / this.yBlockSize);
+            this.cGrid[gridX + (gridY * this.xBlocks)] = 1;
+         },
          "updateBgCanvas": function(){
             //fill live squares
             this.fastFillLive();

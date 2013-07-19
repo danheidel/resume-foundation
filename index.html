@@ -23,7 +23,7 @@
 		<div class="small-12 large-7 columns hide-for-small">
          <div class="title-header">
    			<h2>Dan Heidel's Stuff</h2>
-   			<p id="sub-title">And things, but mostly stuff</p>
+   			<!--<p id="sub-title">And things, but mostly stuff</p>-->
          </div>
 		</div>
 	</div>
@@ -110,6 +110,9 @@
             <li>
                <a id="hideAll"><i class="icon-minus-sign-alt icon-large"></i></a>
             </li>
+            <li>
+               <a id="bgOptions"><i class="icon-cog icon-large"></i></a>
+            </li>
           </ul>
         </section>
       </nav>
@@ -156,36 +159,47 @@
    <script src="js/bgAnim.js"></script>
 
    <script id="main-template" type="text/x-handlebars-template">
-      <div class="large-4 push-8 columns">
-         <div class="panel" id="minor-panel">
-            {{#if minor-title}}
-               <h3>{{minor-title}}</h3>
-            {{/if}}
-            {{#each minor-text}}
-               <p>{{this}}</p>
-            {{/each}}
-         </div>
-      </div>
-      <div class="large-8 pull-4 columns">         
+      <div class="large-8 columns">         
          <div class="panel" id="main-panel">
-            {{#if main-title}}
-               <h3>{{main-title}}</h3>
-            {{/if}}
             {{#each main-text}}
-               <p>{{this}}</p>
+               {{> main-parse}}
             {{/each}}
-            {{#if main-carosel}}
-               <ul data-orbit>
-                  {{#each main-carosel}}
-                     <li>
-                        <img src="{{this.src}}" />
-                        <div class="orbit-caption">{{this.caption}}</div>
-                     </li>
-                  {{/each}}
-               </ul>
-            {{/if}}
          </div>
       </div>
+      <div class="large-4 columns">
+         <div class="panel" id="minor-panel">
+            {{#each minor-text}}
+               {{> main-parse}}
+            {{/each}}
+         </div>
+      </div>
+   </script>
+
+   <script id="text-parse" type="x-handlebars-template">
+      {{#if p}}<p>{{p}}</p>{{/if}}
+      {{#if h1}}<h1>{{h1}}</h1>{{/if}}
+      {{#if h2}}<h2>{{h2}}</h2>{{/if}}
+      {{#if h3}}<h3>{{h3}}</h3>{{/if}}
+      {{#if h4}}<h4>{{h4}}</h4>{{/if}}
+      {{#if h5}}<h5>{{h5}}</h5>{{/if}}
+      {{#if img}}<img src="{{img}}" />{{/if}}
+      {{#if a}}<a href="{{a.href}}"{{#if a.pop}} target='_blank' {{/if}}>{{#if a.text}}{{a.text}}{{/if}}{{#if a.img}}<img src="{{a.img}}" />{{/if}}</a>{{/if}}
+      {{#if hr}}<hr></hr>{{/if}}
+      {{#if embed}}{{{embed}}}{{/if}}
+   </script>
+
+   <script id="main-parse" type="x-handlebars-template">
+      {{> text-parse}}
+      {{#if caro}}
+         <ul data-orbit>
+         {{#each caro}}
+            <li>
+               {{> text-parse}}
+               {{#if caption}}<div class="orbit-caption">{{caption}}</div>{{/if}}
+            </li>
+         {{/each}}
+         </ul>
+      {{/if}}
    </script>
 
    <script id="about-template" type="text/handlebars-template">
@@ -197,13 +211,11 @@
    $(function($){
       window.pageVars = {};
 
+      Handlebars.registerPartial("text-parse", $('#text-parse').html());
+      Handlebars.registerPartial("main-parse", $('#main-parse').html());
+
       var oGridContent = Backbone.Model.extend({
          defaults:{
-            mainHeade: "",
-            mainContent: [],
-            mainCarosel: [],
-            minorHeader: "",
-            minorContent: [],
          }
       })
 
@@ -225,10 +237,7 @@
          },
          render: function(){
             this.mainContext = {
-               "main-title": this.model.get("mainHeader"),
                "main-text": this.model.get("mainContent"),
-               "main-carosel": this.model.get("mainCarosel"),
-               "minor-title": this.model.get("minorHeader"),
                "minor-text": this.model.get("minorContent")
             };
             this.mainHTML = this.mainTemplate(this.mainContext);
@@ -252,24 +261,20 @@
             "cv": "goCV"
          },
             // var Data = {
-            //    mainHeader: "",
             //    mainContent: [],
-            //    mainCarosel: [],
-            //    minorHeader: "",
             //    minorContent: []
             // };
             // pageVars.gridContent.set();
          goHome: function(){
             var mainData = {
-               mainHeader: "Hey, I'm Dan, this is my stuff!",
-               mainContent: ["This is the main area via Backbone."],
-               mainCarosel: [],
-               minorHeader: "Who the hell is Dan?",
+               mainContent: [
+                  {h3: "Hey, I'm Dan, this is my stuff!"},
+                  {p: "This is the main area via Backbone."}],
                minorContent: [
-                  "This is the secondary area via Backbone.",
-                  "This is the second paragraph",
-                  "This is the third paragraph"
-                  ]
+                  {h4: "Who the hell is Dan?"},
+                  {p: "This is the secondary area via Backbone."},
+                  {p: "This is the second paragraph"},
+                  {p: "This is the third paragraph"}]
             };
             pageVars.gridContent.set(mainData);
          },
@@ -277,29 +282,31 @@
          },
          goArtMain: function(){
             var artData = {
-               mainHeader: "Installation art pieces",
-               mainContent: [
-                  ],
-               mainCarosel: [],
-               minorHeader: "",
+               mainContent: [{h3: "Installation art pieces"}],
                minorContent: [
-                  "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee.",
-                  "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the complete physical design and construction of the piece.  "]
+                  {h1: "H1!"},
+                  {h2: "H2!"},
+                  {h3: "H3!"},
+                  {h4: "H4!"},
+                  {h5: "H5!"},
+                  {hr: " "},
+                  {p: "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee."},
+                  {p: "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the complete physical design and construction of the piece."}]
             };
             pageVars.gridContent.set(artData);
          },
          goArtRain: function(){
             var rainData = {
-               mainHeader : "Rain Showers",
-               mainContent : [],
-               mainCarosel: [{
-                  src: "img/rainshower1.jpg",
-                  caption: "Rain showers"},{
-                  src: "img/rainshower2.jpg",
-                  caption: "Rain showers"},{
-                  src:" img/rainshower3.jpg",
-                  caption: "Rain Showers"}],
-               minorHeader : "",
+               mainContent : [
+                  {h3: "Rain Showers"},
+                  {caro: [
+                     {img: "img/rainshower1.jpg",
+                     caption: "Rain showers"},
+                     {img: "img/rainshower2.jpg",
+                     caption: "Rain showers"},
+                     {img: "img/rainshower3.jpg"}
+                  ]
+               }],
                minorContent : []
             };
             pageVars.gridContent.set(rainData);
@@ -307,18 +314,16 @@
          },
          goArtContact: function(){
             var contactData = {
-               mainHeader : "Contact",
-               mainContent : [],
-               mainCarosel: [{
-                  src: "img/contact part3_lbox.jpg",
-                  caption: "caption 1"},{
-                  src: "img/contact part4_lbox.jpg",
-                  caption: "caption 1"},{
-                  src: "img/contact part5_lbox.jpg",
-                  caption: "caption 1"},{
-                  src: "img/contact part6_lbox.jpg",
-                  caption: "caption 1"}],
-               minorHeader : "",
+               mainContent : [
+                  {h3: "Contact"},
+                  {caro:[
+                     {embed: "<iframe src=\"http://player.vimeo.com/video/25887447?byline=0&amp;portrait=0&amp;color=888888\" width=\"700\" height=\"420\" frameborder=\"0\" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"},
+                     {img: "img/contact part3_lbox.jpg"},
+                     {img: "img/contact part4_lbox.jpg"},
+                     {img: "img/contact part5_lbox.jpg"},
+                     {img: "img/contact part6_lbox.jpg"}
+                  ]
+               }],
                minorContent : []
             };
             pageVars.gridContent.set(contactData);
@@ -326,14 +331,13 @@
          },
          goArtDynamik: function(){
             var dynamikData = {
-               mainHeader : "DynamikSpace installation",
-               mainContent : [],
-               mainCarosel: [{
-                  src: "img/dynamicspace1.jpg",
-                  caption: "Dynamicspace"},{
-                  src: "img/dynamicspace2.jpg",
-                  caption: "Dynamicspace"}],
-               minorHeader : "",
+               mainContent : [
+                  {h3: "DynamikSpace installation"},
+                  {caro: [{
+                     img: "img/dynamicspace1.jpg"},{
+                     img: "img/dynamicspace2.jpg"
+                  }]
+               }],
                minorContent : []
             };
             pageVars.gridContent.set(dynamikData);
@@ -341,14 +345,13 @@
          },
          goArtFinn: function(){
             var finnData = {
-               mainHeader : "Finn Hill Junior High",
-               mainContent : [],
-               mainCarosel: [{
-                  src: "img/finnhill sculpture1 sm.jpg",
-                  caption: "Finn Hill"},{
-                  src: "img/finnhill sculpture4 sm.jpg",
-                  caption: "Finn Hill"}],
-               minorHeader : "",
+               mainContent : [
+                  {h3: "Finn Hill Junior High"},
+                  {caro: [{
+                     img: "img/finnhill sculpture1 sm.jpg"},{
+                     img: "img/finnhill sculpture4 sm.jpg"
+                  }]
+               }],
                minorContent : []
             };
             pageVars.gridContent.set(finnData);
@@ -356,20 +359,14 @@
          },
          goElectronics: function(){
             var electronicsData = {
-               mainHeader : "My electronics work",
-               mainContent : [],
-               mainCarosel: [],
-               minorHeader : "",
+               mainContent : [{h3: "My electronics work"}],
                minorContent : []
             };
             pageVars.gridContent.set(electronicsData);
          },
          goCV: function(){
             var cvData = {
-               mainHeader : "My resume",
-               mainContent : [],
-               mainCarosel: [],
-               minorHeader : "",
+               mainContent : [{h3: "My resume"}],
                minorContent : []
             };
             pageVars.gridContent.set(cvData);
@@ -401,9 +398,9 @@
 
       function updateCanvas(){
          //calculate time delta
-         intervalHandle.timeDelta = Date.now() - intervalHandle.oldTime;
-         $('#sub-title').text(Date.now() + "   delta: " + intervalHandle.timeDelta + "   FPS: " + (1/(intervalHandle.timeDelta/1000)).toPrecision(4));
-         intervalHandle.oldTime = Date.now();
+         //intervalHandle.timeDelta = Date.now() - intervalHandle.oldTime;
+         //$('#sub-title').text(Date.now() + "   delta: " + intervalHandle.timeDelta + "   FPS: " + (1/(intervalHandle.timeDelta/1000)).toPrecision(4));
+         //intervalHandle.oldTime = Date.now();
          bgVars.updateBgCanvas();
       }
 
@@ -420,6 +417,20 @@
             }
          }
       }, window);
+
+      $("#background-canvas").on({
+         mousedown: function(event){
+            bgVars.mouseActive = true;
+         },
+         mouseup: function(event){
+            bgVars.mouseActive = false;
+         },
+         mousemove: function(event){
+            if(bgVars.mouseActive == true){
+               bgVars.userInput(event.offsetX, event.offsetY);
+            }
+         }
+      });
 
       pageVars.hideVal = false;
 
@@ -445,6 +456,9 @@
                $("#info-menu").show(500);
             }
          }
+      });
+      $('bgOptions').on({
+
       });
    });
 
