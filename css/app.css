@@ -39,10 +39,6 @@ canvas{
    padding: .2em; 
    border-radius: 4px 4px 4px 4px;
 }
-.panel.noedge{
-   margin: 0em;
-   padding: 0em;
-}
 .panel.clear{
    border: solid transparent;
    background: none;
@@ -53,6 +49,11 @@ canvas{
    padding: 1em;
    margin: 0px;
    height: auto;
+}
+.panel.no-edge{
+   margin: 0em;
+   padding: 0em;
+   border-width: 0px 0px 0px 0px !important;
 }
 .row { 
    max-width: 90%; 

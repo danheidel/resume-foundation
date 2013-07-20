@@ -118,7 +118,8 @@
       </nav>
    </div>
 
-	<div class="row" id="main-content"><!--templated data goes here--></div>
+	<div id="main-content"><!--templated data goes here--></div>
+
    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
    <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
    <!-- -->
@@ -159,23 +160,12 @@
    <script src="js/bgAnim.js"></script>
 
    <script id="main-template" type="text/x-handlebars-template">
-      <div class="large-8 columns">         
-         <div class="panel" id="main-panel">
-            {{#each main-text}}
-               {{> main-parse}}
-            {{/each}}
-         </div>
-      </div>
-      <div class="large-4 columns">
-         <div class="panel" id="minor-panel">
-            {{#each minor-text}}
-               {{> main-parse}}
-            {{/each}}
-         </div>
-      </div>
+      {{#each model-content}}
+         {{> row-parse}}
+      {{/each}}
    </script>
 
-   <script id="text-parse" type="x-handlebars-template">
+   <script id="inner-parse" type="x-handlebars-template">
       {{#if p}}<p>{{p}}</p>{{/if}}
       {{#if h1}}<h1>{{h1}}</h1>{{/if}}
       {{#if h2}}<h2>{{h2}}</h2>{{/if}}
@@ -186,20 +176,41 @@
       {{#if a}}<a href="{{a.href}}"{{#if a.pop}} target='_blank' {{/if}}>{{#if a.text}}{{a.text}}{{/if}}{{#if a.img}}<img src="{{a.img}}" />{{/if}}</a>{{/if}}
       {{#if hr}}<hr></hr>{{/if}}
       {{#if embed}}{{{embed}}}{{/if}}
+      {{#if row}}{{> row-parse}}{{/if}}
    </script>
 
-   <script id="main-parse" type="x-handlebars-template">
-      {{> text-parse}}
+   <script id="outer-parse" type="x-handlebars-template">
+      {{> inner-parse}}
       {{#if caro}}
          <ul data-orbit>
          {{#each caro}}
             <li>
-               {{> text-parse}}
+               {{> inner-parse}}
                {{#if caption}}<div class="orbit-caption">{{caption}}</div>{{/if}}
             </li>
          {{/each}}
          </ul>
       {{/if}}
+   </script>
+
+   <script id="panel-parse" type="x-handlebars-template">
+      {{! gets a panel}}
+      <div class="{{{panel.[0].format}}} columns">
+         <div class="panel {{{panel.[1].style}}}">
+            {{#each panel}}
+               {{> outer-parse}}
+            {{/each}}
+         </div>
+      </div>
+   </script>
+
+   <script id="row-parse" type="x-handlebars-template">
+      {{! gets a row}}
+      <div class="row">
+         {{#each row}}
+            {{> panel-parse}}
+         {{/each}}
+      </div>
    </script>
 
    <script id="about-template" type="text/handlebars-template">
@@ -211,13 +222,14 @@
    $(function($){
       window.pageVars = {};
 
-      Handlebars.registerPartial("text-parse", $('#text-parse').html());
-      Handlebars.registerPartial("main-parse", $('#main-parse').html());
+      Handlebars.registerPartial("inner-parse", $('#inner-parse').html());
+      Handlebars.registerPartial("outer-parse", $('#outer-parse').html());
+      Handlebars.registerPartial("panel-parse", $('#panel-parse').html());
+      Handlebars.registerPartial("row-parse", $('#row-parse').html());
 
       var oGridContent = Backbone.Model.extend({
-         defaults:{
-         }
-      })
+         defaults: {"model-content": ""}
+      });
 
       pageVars.gridContent = new oGridContent;
 
@@ -237,9 +249,9 @@
          },
          render: function(){
             this.mainContext = {
-               "main-text": this.model.get("mainContent"),
-               "minor-text": this.model.get("minorContent")
+               "model-content": this.model.get("modelContent")
             };
+
             this.mainHTML = this.mainTemplate(this.mainContext);
             this.el.innerHTML = this.mainHTML;
             return this;
@@ -258,117 +270,214 @@
             "art-dynamik": "goArtDynamik",
             "art-finn": "goArtFinn",
             "electronics": "goElectronics",
-            "cv": "goCV"
+            "cv": "goCV",
          },
             // var Data = {
-            //    mainContent: [],
-            //    minorContent: []
-            // };
+            //    modelContent: [
+            //       {row:[
+            //          {panel:[
+            //             {format: "large-8"},
+            //             {p: "This is the main area via Backbone."}
+            //          ]},
+            //          {panel:[
+            //             {format: "large-4"},
+            //             {p: "This is the secondary area via Backbone."}
+            //          ]}
+            //       ]}
+            // ]};
             // pageVars.gridContent.set();
          goHome: function(){
             var mainData = {
-               mainContent: [
-                  {h3: "Hey, I'm Dan, this is my stuff!"},
-                  {p: "This is the main area via Backbone."}],
-               minorContent: [
-                  {h4: "Who the hell is Dan?"},
-                  {p: "This is the secondary area via Backbone."},
-                  {p: "This is the second paragraph"},
-                  {p: "This is the third paragraph"}]
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "Hey, I'm Dan, this is my stuff!"},
+                        {p: "This is the main area via Backbone."},
+                        {row: [
+                           {panel:[
+                              {format: "large-8"},
+                              {style: "clear"},
+                              {h3: "nested large:8"}
+                           ]},
+                           {panel: [
+                              {format: "large-4"},
+                              {h3: "nested large-4"}
+                           ]}
+                        ]}
+                     ]},
+                     {panel:[
+                        {format: "large-4"},
+                        {style: "clear no-edge"},
+                        {row: [
+                           {panel: [
+                              {format: "large-12"},
+                              {h4: "Who the hell is Dan?"},
+                              {p: "This is the secondary area via Backbone."},
+                              {p: "This is the second paragraph"},
+                              {p: "This is the third paragraph"}
+                           ]}
+                        ]},
+                        {row: [
+                           {panel: [
+                              {format: "large-12"},
+                              {p: "more stuff!"}
+                           ]}
+                        ]}
+                     ]}
+                  ]},
+                  {row:[
+                     {panel:[
+                        {format: "large-5"},
+                        {h3: "first panel, row 2"}
+                     ]},
+                     {panel:[
+                        {format: "large-7"},
+                        {h1: "second panel, row2"}
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(mainData);
          },
          goBlog: function(){
          },
          goArtMain: function(){
             var artData = {
-               mainContent: [{h3: "Installation art pieces"}],
-               minorContent: [
-                  {h1: "H1!"},
-                  {h2: "H2!"},
-                  {h3: "H3!"},
-                  {h4: "H4!"},
-                  {h5: "H5!"},
-                  {hr: " "},
-                  {p: "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee."},
-                  {p: "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the complete physical design and construction of the piece."}]
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "Installation art pieces"}
+                     ]},
+                     {panel:[
+                        {format: "large-4"},
+                        {h1: "H1!"},
+                        {h2: "H2!"},
+                        {h3: "H3!"},
+                        {h4: "H4!"},
+                        {h5: "H5!"},
+                        {hr: " "},
+                        {p: "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee."},
+                        {p: "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the complete physical design and construction of the piece."}
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(artData);
          },
          goArtRain: function(){
             var rainData = {
-               mainContent : [
-                  {h3: "Rain Showers"},
-                  {caro: [
-                     {img: "img/rainshower1.jpg",
-                     caption: "Rain showers"},
-                     {img: "img/rainshower2.jpg",
-                     caption: "Rain showers"},
-                     {img: "img/rainshower3.jpg"}
-                  ]
-               }],
-               minorContent : []
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "Rain Showers"},
+                        {caro: [
+                           {img: "img/rainshower1.jpg",
+                           caption: "Rain showers"},
+                           {img: "img/rainshower2.jpg",
+                           caption: "Rain showers"},
+                           {img: "img/rainshower3.jpg"}
+                        ]}
+                     ]},
+                     {panel:[
+                        {format: "large-4"}
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(rainData);
             Foundation.libs.orbit.init();
          },
          goArtContact: function(){
             var contactData = {
-               mainContent : [
-                  {h3: "Contact"},
-                  {caro:[
-                     {embed: "<iframe src=\"http://player.vimeo.com/video/25887447?byline=0&amp;portrait=0&amp;color=888888\" width=\"700\" height=\"420\" frameborder=\"0\" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"},
-                     {img: "img/contact part3_lbox.jpg"},
-                     {img: "img/contact part4_lbox.jpg"},
-                     {img: "img/contact part5_lbox.jpg"},
-                     {img: "img/contact part6_lbox.jpg"}
-                  ]
-               }],
-               minorContent : []
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "Contact"},
+                        {caro:[
+                           {img: "img/contact part3_lbox.jpg"},
+                           {embed: "<iframe src=\"http://player.vimeo.com/video/25887447?byline=0&amp;portrait=0&amp;color=888888\" width=\"700\" height=\"420\" frameborder=\"0\" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"},
+                           {img: "img/contact part4_lbox.jpg"},
+                           {img: "img/contact part5_lbox.jpg"},
+                           {img: "img/contact part6_lbox.jpg"}
+                        ]}
+                     ]},
+                     {panel:[
+                        {format: "large-4"}
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(contactData);
             Foundation.libs.orbit.init();
          },
          goArtDynamik: function(){
             var dynamikData = {
-               mainContent : [
-                  {h3: "DynamikSpace installation"},
-                  {caro: [{
-                     img: "img/dynamicspace1.jpg"},{
-                     img: "img/dynamicspace2.jpg"
-                  }]
-               }],
-               minorContent : []
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "DynamikSpace installation"},
+                        {caro: [
+                           {img: "img/dynamicspace1.jpg"},
+                           {img: "img/dynamicspace2.jpg"}
+                        ]}
+                     ]},
+                     {panel:[
+                        {format: "large-4"}
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(dynamikData);
             Foundation.libs.orbit.init();
          },
          goArtFinn: function(){
             var finnData = {
-               mainContent : [
-                  {h3: "Finn Hill Junior High"},
-                  {caro: [{
-                     img: "img/finnhill sculpture1 sm.jpg"},{
-                     img: "img/finnhill sculpture4 sm.jpg"
-                  }]
-               }],
-               minorContent : []
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "Finn Hill Junior High"},
+                        {caro: [
+                           {img: "img/finnhill sculpture1 sm.jpg"},
+                           {img: "img/finnhill sculpture4 sm.jpg"}
+                        ]}
+                     ]},
+                     {panel:[
+                        {format: "large-4"}
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(finnData);
             Foundation.libs.orbit.init();
          },
          goElectronics: function(){
             var electronicsData = {
-               mainContent : [{h3: "My electronics work"}],
-               minorContent : []
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "My electronics work"}
+                     ]},
+                     {panel:[
+                        {format: "large-4"},
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(electronicsData);
          },
          goCV: function(){
             var cvData = {
-               mainContent : [{h3: "My resume"}],
-               minorContent : []
-            };
+               modelContent: [
+                  {row:[
+                     {panel:[
+                        {format: "large-8"},
+                        {h3: "My resume"}
+                     ]},
+                     {panel:[
+                        {format: "large-4"},
+                     ]}
+                  ]}
+            ]};
             pageVars.gridContent.set(cvData);
          }
 
