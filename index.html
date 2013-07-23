@@ -23,7 +23,6 @@
 		<div class="small-12 large-7 columns hide-for-small">
          <div class="title-header">
    			<h2>Dan Heidel's Stuff</h2>
-   			<!--<p id="sub-title">And things, but mostly stuff</p>-->
          </div>
 		</div>
 	</div>
@@ -360,7 +359,7 @@
 
       bgVars.initBgVars(myCanvas, myCtx);
 
-      window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 40); 
+      window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 
       intervalHandle.oldTime = Date.now();
       intervalHandle.timeDelta = 0;
       intervalHandle.updateTime = 0;
@@ -396,7 +395,8 @@
          },
          mousemove: function(event){
             if(bgVars.mouseActive == true){
-               bgVars.userInput(event.offsetX, event.offsetY);
+               bgVars.userInput(event.pageX, event.pageY);
+               console.log(event);
             }
          }
       });
