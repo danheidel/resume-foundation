@@ -93,6 +93,9 @@ canvas{
 .panel.top-bar > p {
   color:#aaa;
 }
+.panel.top-bar > a {
+   background-color: #000;
+}
 .panel.top-bar > h1, .panel.top-bar > h2, .panel.top-bar > h3 {
   color: #aaa;
 }

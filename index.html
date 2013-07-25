@@ -99,11 +99,12 @@
                   <li class="divider">
                      <div class="panel top-bar" id="about-content">
                         <a href="construction.html" data-reveal-id="construction-modal" data-reveal-ajax="true">
-                           <img src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
+                           <img width="35px" height="35px" src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
                         </a>
                         <p>This is a place to showcase some of the stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
 
                         <h1> test123 </h1>
+                        <p id="bgInfo"></p>
                      </div>
                   </li>
                </ul>
@@ -357,6 +358,7 @@
       };
       resizeCanvas();
 
+      bgVars.selectBG(0);
       bgVars.initBgVars(myCanvas, myCtx);
 
       window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 
@@ -396,7 +398,7 @@
          mousemove: function(event){
             if(bgVars.mouseActive == true){
                bgVars.userInput(event.pageX, event.pageY);
-               console.log(event);
+               //console.log(event);
             }
          }
       });
