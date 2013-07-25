@@ -23,7 +23,6 @@
 		<div class="small-12 large-7 columns hide-for-small">
          <div class="title-header">
    			<h2>Dan Heidel's Stuff</h2>
-   			<!--<p id="sub-title">And things, but mostly stuff</p>-->
          </div>
 		</div>
 	</div>
@@ -47,7 +46,7 @@
                   <li>
                      <a href="#art-rain" style="text-align: center">
                         <img src="img/rainshow-thumb.png" class="top-bar-image">
-                        <br>Rain Showers
+                        <br>Rain Shower
                      </a>
                   </li>
                   <li>
@@ -57,9 +56,9 @@
                      </a>
                   </li>
                   <li>
-                     <a href="#art-dynamik" style="text-align: center">
+                     <a href="#art-inspire" style="text-align: center">
                         <img src="img/dynamicspace thumbnail.png" class="top-bar-image">
-                        <br>DynamikSpace
+                        <br>Inspiratories
                      </a>
                   </li>
                   <li>
@@ -76,7 +75,9 @@
               </ul>
             </li>
             <li><a href="#cv">CV</a></li>
+            <li><a href="#test">Test</a></li>
           </ul>
+
           <ul class="right">
             <li class="has-dropdown" id="contact-menu"><a href="#"><i class="icon-envelope icon-large"></i></a>
                <ul class="dropdown">
@@ -98,11 +99,12 @@
                   <li class="divider">
                      <div class="panel top-bar" id="about-content">
                         <a href="construction.html" data-reveal-id="construction-modal" data-reveal-ajax="true">
-                           <img src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
+                           <img width="35px" height="35px" src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
                         </a>
                         <p>This is a place to showcase some of the stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
 
                         <h1> test123 </h1>
+                        <p id="bgInfo"></p>
                      </div>
                   </li>
                </ul>
@@ -156,6 +158,7 @@
    <script src="js/foundation/foundation.placeholder.js"></script>  
    -->
 
+   <script src="js/template.js"></script>
    <script src="js/RaFlib.js"></script>
    <script src="js/bgAnim.js"></script>
 
@@ -167,20 +170,47 @@
 
    <script id="inner-parse" type="x-handlebars-template">
       {{#if p}}<p>{{p}}</p>{{/if}}
+      {{#if t}}{{t}}{{/if}}
       {{#if h1}}<h1>{{h1}}</h1>{{/if}}
       {{#if h2}}<h2>{{h2}}</h2>{{/if}}
       {{#if h3}}<h3>{{h3}}</h3>{{/if}}
       {{#if h4}}<h4>{{h4}}</h4>{{/if}}
       {{#if h5}}<h5>{{h5}}</h5>{{/if}}
+      {{#if blockq}}<blockquote>{{blockq}}</blockquote>{{/if}}
+      {{#if br}}<br />{{/if}}
       {{#if img}}<img src="{{img}}" />{{/if}}
-      {{#if a}}<a href="{{a.href}}"{{#if a.pop}} target='_blank' {{/if}}>{{#if a.text}}{{a.text}}{{/if}}{{#if a.img}}<img src="{{a.img}}" />{{/if}}</a>{{/if}}
+      {{#if a}}<a href="{{a.href}}"{{#if a.pop}} target='_blank' {{/if}}>{{#with a.link}}{{> inner-parse}}{{/with}}</a>{{/if}}
+      {{#if ul}}
+         <ul class="{{{ul.[0].style}}}">
+         {{#each ul}}
+            {{> inner-parse}}
+         {{/each}}
+         </ul>
+      {{/if}}
+      {{#if ol}}
+         <ol class="{{{ol.[0].style}}}>">
+         {{#each ol}}
+            {{> inner-parse}}
+         {{/each}}
+         </ol>
+      {{/if}}
+      {{#if dl}}
+         <dl class="{{{dl.[0].style}}}>">
+         {{#each dl}}
+            {{> inner-parse}}
+         {{/each}}
+         </dl>
+      {{/if}}
+      {{#if li}}
+         <li>
+         {{#each li}}
+            {{> inner-parse}}
+         {{/each}}
+         </li>
+      {{/if}}
       {{#if hr}}<hr></hr>{{/if}}
       {{#if embed}}{{{embed}}}{{/if}}
       {{#if row}}{{> row-parse}}{{/if}}
-   </script>
-
-   <script id="outer-parse" type="x-handlebars-template">
-      {{> inner-parse}}
       {{#if caro}}
          <ul data-orbit>
          {{#each caro}}
@@ -198,7 +228,7 @@
       <div class="{{{panel.[0].format}}} columns">
          <div class="panel {{{panel.[1].style}}}">
             {{#each panel}}
-               {{> outer-parse}}
+               {{> inner-parse}}
             {{/each}}
          </div>
       </div>
@@ -223,7 +253,6 @@
       window.pageVars = {};
 
       Handlebars.registerPartial("inner-parse", $('#inner-parse').html());
-      Handlebars.registerPartial("outer-parse", $('#outer-parse').html());
       Handlebars.registerPartial("panel-parse", $('#panel-parse').html());
       Handlebars.registerPartial("row-parse", $('#row-parse').html());
 
@@ -267,219 +296,50 @@
             "art-main":  "goArtMain",
             "art-rain": "goArtRain",
             "art-contact": "goArtContact",
-            "art-dynamik": "goArtDynamik",
+            "art-inspire": "goArtInspire",
             "art-finn": "goArtFinn",
             "electronics": "goElectronics",
             "cv": "goCV",
+            "test": "goTest",
          },
-            // var Data = {
-            //    modelContent: [
-            //       {row:[
-            //          {panel:[
-            //             {format: "large-8"},
-            //             {p: "This is the main area via Backbone."}
-            //          ]},
-            //          {panel:[
-            //             {format: "large-4"},
-            //             {p: "This is the secondary area via Backbone."}
-            //          ]}
-            //       ]}
-            // ]};
-            // pageVars.gridContent.set();
          goHome: function(){
-            var mainData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "Hey, I'm Dan, this is my stuff!"},
-                        {p: "This is the main area via Backbone."},
-                        {row: [
-                           {panel:[
-                              {format: "large-8"},
-                              {style: "clear"},
-                              {h3: "nested large:8"}
-                           ]},
-                           {panel: [
-                              {format: "large-4"},
-                              {h3: "nested large-4"}
-                           ]}
-                        ]}
-                     ]},
-                     {panel:[
-                        {format: "large-4"},
-                        {style: "clear no-edge"},
-                        {row: [
-                           {panel: [
-                              {format: "large-12"},
-                              {h4: "Who the hell is Dan?"},
-                              {p: "This is the secondary area via Backbone."},
-                              {p: "This is the second paragraph"},
-                              {p: "This is the third paragraph"}
-                           ]}
-                        ]},
-                        {row: [
-                           {panel: [
-                              {format: "large-12"},
-                              {p: "more stuff!"}
-                           ]}
-                        ]}
-                     ]}
-                  ]},
-                  {row:[
-                     {panel:[
-                        {format: "large-5"},
-                        {h3: "first panel, row 2"}
-                     ]},
-                     {panel:[
-                        {format: "large-7"},
-                        {h1: "second panel, row2"}
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(mainData);
+            pageVars.gridContent.set(templateData.mainData);
+            Foundation.libs.orbit.init();
          },
          goBlog: function(){
          },
          goArtMain: function(){
-            var artData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "Installation art pieces"}
-                     ]},
-                     {panel:[
-                        {format: "large-4"},
-                        {h1: "H1!"},
-                        {h2: "H2!"},
-                        {h3: "H3!"},
-                        {h4: "H4!"},
-                        {h5: "H5!"},
-                        {hr: " "},
-                        {p: "Over the last few years, I have worked on a number of different artwork installation pieces in collaboration with Seattle artist Susie J. Lee."},
-                        {p: "In most cases, I was responsible for the electronics and lighting components of the artwork.  However, in some cases, I also did the complete physical design and construction of the piece."}
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(artData);
+            pageVars.gridContent.set(templateData.artData);
+            Foundation.libs.orbit.init();
          },
          goArtRain: function(){
-            var rainData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "Rain Showers"},
-                        {caro: [
-                           {img: "img/rainshower1.jpg",
-                           caption: "Rain showers"},
-                           {img: "img/rainshower2.jpg",
-                           caption: "Rain showers"},
-                           {img: "img/rainshower3.jpg"}
-                        ]}
-                     ]},
-                     {panel:[
-                        {format: "large-4"}
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(rainData);
+            pageVars.gridContent.set(templateData.rainData);
             Foundation.libs.orbit.init();
          },
          goArtContact: function(){
-            var contactData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "Contact"},
-                        {caro:[
-                           {img: "img/contact part3_lbox.jpg"},
-                           {embed: "<iframe src=\"http://player.vimeo.com/video/25887447?byline=0&amp;portrait=0&amp;color=888888\" width=\"700\" height=\"420\" frameborder=\"0\" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"},
-                           {img: "img/contact part4_lbox.jpg"},
-                           {img: "img/contact part5_lbox.jpg"},
-                           {img: "img/contact part6_lbox.jpg"}
-                        ]}
-                     ]},
-                     {panel:[
-                        {format: "large-4"}
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(contactData);
+            pageVars.gridContent.set(templateData.contactData);
             Foundation.libs.orbit.init();
          },
-         goArtDynamik: function(){
-            var dynamikData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "DynamikSpace installation"},
-                        {caro: [
-                           {img: "img/dynamicspace1.jpg"},
-                           {img: "img/dynamicspace2.jpg"}
-                        ]}
-                     ]},
-                     {panel:[
-                        {format: "large-4"}
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(dynamikData);
+         goArtInspire: function(){
+            pageVars.gridContent.set(templateData.inspireData);
             Foundation.libs.orbit.init();
          },
          goArtFinn: function(){
-            var finnData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "Finn Hill Junior High"},
-                        {caro: [
-                           {img: "img/finnhill sculpture1 sm.jpg"},
-                           {img: "img/finnhill sculpture4 sm.jpg"}
-                        ]}
-                     ]},
-                     {panel:[
-                        {format: "large-4"}
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(finnData);
+            pageVars.gridContent.set(templateData.finnData);
             Foundation.libs.orbit.init();
          },
          goElectronics: function(){
-            var electronicsData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "My electronics work"}
-                     ]},
-                     {panel:[
-                        {format: "large-4"},
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(electronicsData);
+            pageVars.gridContent.set(templateData.electronicsData);
+            Foundation.libs.orbit.init();
          },
          goCV: function(){
-            var cvData = {
-               modelContent: [
-                  {row:[
-                     {panel:[
-                        {format: "large-8"},
-                        {h3: "My resume"}
-                     ]},
-                     {panel:[
-                        {format: "large-4"},
-                     ]}
-                  ]}
-            ]};
-            pageVars.gridContent.set(cvData);
-         }
+            pageVars.gridContent.set(templateData.cvData);
+            Foundation.libs.orbit.init();
+         },
+         goTest: function(){
+            pageVars.gridContent.set(templateData.testData);
+            Foundation.libs.orbit.init();
+         },
 
       });
       window.myRouter = new oRouter;
@@ -498,9 +358,10 @@
       };
       resizeCanvas();
 
+      bgVars.selectBG(0);
       bgVars.initBgVars(myCanvas, myCtx);
 
-      window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 40); 
+      window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 
       intervalHandle.oldTime = Date.now();
       intervalHandle.timeDelta = 0;
       intervalHandle.updateTime = 0;
@@ -536,7 +397,8 @@
          },
          mousemove: function(event){
             if(bgVars.mouseActive == true){
-               bgVars.userInput(event.offsetX, event.offsetY);
+               bgVars.userInput(event.pageX, event.pageY);
+               //console.log(event);
             }
          }
       });
