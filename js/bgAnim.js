@@ -185,7 +185,7 @@
    };
 })(bgVars.GoL = bgVars || {});
 
-
+//*****************************************************************************************************************
 
 (function(namespace){  //lattice
    var _Canvas = {};
@@ -327,12 +327,12 @@
    }
 
    function dampenCycle(){
+      //cycles the dissipation constand and background color over time
       var invDiss = (dissCycle + 180) % 360;
       dissipation = 0.78 + 0.1 * (Math.cos((Math.PI / 180) * dissCycle)); // 1 degree per cycle
-      bgColor = 'rgb(' + (((Math.cos((Math.PI / 180 ) * dissCycle) * 49) << 0) + 50) + ', ' + (((Math.cos((Math.PI / 180) * invDiss) * 44) << 0) + 45) + ', ' + (((Math.cos((Math.PI / 180) * invDiss) * 44) << 0) + 45) + ')';
+      bgColor = 'rgb(' + (((Math.cos((Math.PI / 180 ) * dissCycle) * 54) << 0) + 55) + ', ' + (((Math.cos((Math.PI / 180) * invDiss) * 44) << 0) + 45) + ', ' + (((Math.cos((Math.PI / 180) * invDiss) * 49) << 0) + 50) + ')';
       dissCycle += 0.35;
       dissCycle %= 360;
-      console.log(dissCycle);
    }
 
    function findNeighbors(){
@@ -433,7 +433,23 @@
    };
 })(bgVars.lattice = bgVars.lattice || {});
 
+//*****************************************************************************************************************
 
+(function(namespace){  //lattice
+   var _Canvas = {};
+   var _Ctx = {};
+   var fArray = [];
+
+   namespace.about = "This is the famous Conway Game of Life";
+   namespace.initBgVars = function(iCanvas, iCtx){
+   };
+   namespace.userInput = function(event){
+   };
+   namespace.updateBgCanvas = function(){
+   };
+})(bgVars.flock = bgVars.flock || {});
+
+//*****************************************************************************************************************
 
 bgVars.selectBG = function(selector){
    if(selector == 0){
@@ -448,6 +464,13 @@ bgVars.selectBG = function(selector){
       bgVars.initBgVars = bgVars.lattice.initBgVars;
       bgVars.userInput = bgVars.lattice.userInput;
       bgVars.updateBgCanvas = bgVars.lattice.updateBgCanvas;
+      $("#bgInfo").html(bgVars.about);
+   }
+   if(selector == 2){
+      bgVars.about = bgVars.flock.about;
+      bgVars.initBgVars = bgVars.flock.initBgVars;
+      bgVars.userInput = bgVars.flock.userInput;
+      bgVars.updateBgCanvas = bgVars.flock.updateBgCanvas;
       $("#bgInfo").html(bgVars.about);
    }
 };

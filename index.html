@@ -39,30 +39,30 @@
         <section class="top-bar-section">
           <!-- Left Nav Section -->
           <ul class="left">
-            <li><a href="#" id="home-menu"><i class="icon-home icon-2x"></i></a></li>
+            <li><a href="#" class="menu-item" id="home-menu"><i class="icon-home icon-2x"></i></a></li>
             <!--<li><a href="#blog">Blog</a></li>-->
             <li class="has-dropdown" id="artwork-menu"><a href="#art-main">Artwork</a>
                <ul class="dropdown">
                   <li>
-                     <a href="#art-rain" style="text-align: center">
+                     <a href="#art-rain" class="menu-item" style="text-align: center">
                         <img src="img/rainshow-thumb.png" class="top-bar-image">
                         <br>Rain Shower
                      </a>
                   </li>
                   <li>
-                     <a href="#art-contact" style="text-align: center">
+                     <a href="#art-contact" class="menu-item" style="text-align: center">
                         <img src="img/contact thumbnail.png" class="top-bar-image">
                         <br>Contact
                      </a>
                   </li>
                   <li>
-                     <a href="#art-inspire" style="text-align: center">
+                     <a href="#art-inspire" class="menu-item" style="text-align: center">
                         <img src="img/dynamicspace thumbnail.png" class="top-bar-image">
                         <br>Inspiratories
                      </a>
                   </li>
                   <li>
-                     <a href="#art-finn" style="text-align: center">
+                     <a href="#art-finn" class="menu-item" style="text-align: center">
                         <img src="img/finnhill thumbnail.png" class="top-bar-image">
                         <br>Finn Hill
                      </a>
@@ -71,26 +71,26 @@
             </li>
             <li class="has-dropdown" id="electronics-menu"><a href="#electronics">Electronics</a>
               <ul class="dropdown">
-                <li><a href="#electronics">Coming soon!</a></li>
+                <li><a href="#electronics" class="menu-item">Coming soon!</a></li>
               </ul>
             </li>
-            <li><a href="#cv">CV</a></li>
-            <li><a href="#test">Test</a></li>
+            <li><a href="#cv" class="menu-item">CV</a></li>
+            <li><a href="#test" class="menu-item">Test</a></li>
           </ul>
 
           <ul class="right">
             <li class="has-dropdown" id="contact-menu"><a href="#"><i class="icon-envelope icon-large"></i></a>
                <ul class="dropdown">
-                  <li><a href="" style="text-align: center"><i class="icon-envelope icon-2x"></i></a>
+                  <li><a href="" class="menu-item" style="text-align: center"><i class="icon-envelope icon-2x"></i></a>
                   </li>
                   <li>
-                     <a href="https://github.com/danheidel" target="_blank" style="text-align: center">
+                     <a href="https://github.com/danheidel" class="menu-item" target="_blank" style="text-align: center">
                         <i class="icon-github-sign icon-3x"></i>
                      </a>
                   </li>
-                  <li><a href="https://twitter.com/dan_heidel" target="_blank" style="text-align: center"><i class="icon-twitter-sign icon-3x"></i></a>
+                  <li><a href="https://twitter.com/dan_heidel" class="menu-item" target="_blank" style="text-align: center"><i class="icon-twitter-sign icon-3x"></i></a>
                   </li>
-                  <li><a href="https://www.linkedin.com/profile/view?id=43637762twitter" target="_blank" style="text-align: center"><i class="icon-linkedin-sign icon-3x"></i></a>
+                  <li><a href="https://www.linkedin.com/profile/view?id=43637762twitter" class="menu-item" target="_blank" style="text-align: center"><i class="icon-linkedin-sign icon-3x"></i></a>
                   </li>
                </ul>
             </li>
@@ -387,6 +387,10 @@
             }
          }
       }, window);
+
+      $('.menu-item, a.parent-link').click(function(){
+         $('.top-bar, [data-topbar]').css('height', '').removeClass('expanded');
+      });
 
       $("#background-canvas").on({
          mousedown: function(event){
