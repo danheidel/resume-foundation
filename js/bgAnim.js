@@ -148,12 +148,11 @@
       cGridDown = new Uint8Array(xBlocks * yBlocks);
       cGrid2 = new Uint8Array(xBlocks * yBlocks);
    };
-   namespace.userInput = function(iX, iY){
-      console.log(iX);
-      console.log(iY);
-      var gridX = Math.round(iX / xBlockSize);
-      var gridY = Math.round(iY / yBlockSize);
-      cGrid[gridX + (gridY * xBlocks)] = 1;
+   namespace.userInput = function(event){
+      console.log(event);
+      //var gridX = Math.round(iX / xBlockSize);
+      //var gridY = Math.round(iY / yBlockSize);
+      //cGrid[gridX + (gridY * xBlocks)] = 1;
    };
    namespace.updateBgCanvas = function(){
       //convert grid data to graphics data for drawing
@@ -191,65 +190,133 @@
 (function(namespace){  //lattice
    var _Canvas = {};
    var _Ctx = {};
+   //var lCanvas = [];
+   //var lCtx = [];
    var lCanvas = document.createElement('canvas');
    var lCtx = lCanvas.getContext('2d');
-   var lWidth, lHeight;
+   var rCanvas = document.createElement('canvas');
+   var rCtx = rCanvas.getContext('2d');
    var aGrid = [];
    var gridSize, rowHeight;
    var radius;
    var kT;
+   var dissipation = 0.87; //energy loss factor per round
 
    function dist(dX, dY){
       var distMag = Math.sqrt((dX * dX) + (dY * dY));
       return distMag;
    };
 
-   function forceEq(iX, iY){
-      var mag = dist(iX, iY);
-      if(mag < gridSize){
-         return (gridSize - mag)/10;
-      }else{
-         return (mag - gridSize)/1;
-      }
-   };
-
    function calcThermal(atom){
       //simulates Brownian motion noise
-      atom.deltaX = ((Math.random()*2)>>0 == 0) ? kT * Math.pow(Math.random() * 2.7, 3) : -kT * Math.pow(Math.random() * 2.7, 3);
-      atom.deltaY = ((Math.random()*2)>>0 == 0) ? kT * Math.pow(Math.random() * 2.7, 3) : -kT * Math.pow(Math.random() * 2.7, 3);
+      atom.ddX += ((Math.random()*2)>>0 == 0) ? kT * Math.pow(Math.random(), 2) : -kT * Math.pow(Math.random(), 2);
+      atom.ddY += ((Math.random()*2)>>0 == 0) ? kT * Math.pow(Math.random(), 2) : -kT * Math.pow(Math.random(), 2);
    };
 
    function calcNeighborForce(atom){
-      //sums up the attractive/respulsive forces from neighbors
+      //sums up the respulsive forces from neighbors
       var dX, dY, mag;
+      var tweak = .15;
       var dDeltaX = 0, dDeltaY = 0;
       for(var rep=0;rep<atom.neighbors.length;rep++){
-         dX = (atom.neighbors[rep].x - atom.x);
-         dY = (atom.neighbors[rep].y - atom.y);
-         mag = Math.pow(forceEq(dX, dY)/100, 2);
-         //if this is a repulsor atom, make all force repulsive and strong
-         if(atom.neighbors[rep].isRepulsor == true){}
+         dX = (atom.x - atom.neighbors[rep].x);
+         dY = (atom.y - atom.neighbors[rep].y);
+         mag = (gridSize - dist(dX, dY)) / gridSize;
+         if(atom.neighbors[rep].isRepulsor > 0){
+            atom.isRepulsor = 1;
+            mag += 1;
+         }
+
          dDeltaX += (dX * mag);
          dDeltaY += (dY * mag);
       }
-      atom.deltaX += dDeltaX;
-      atom.deltaY += dDeltaY;
+      atom.ddX += dDeltaX * tweak;
+      atom.ddY += dDeltaY * tweak;
    };
 
    function cheatToHome(atom){
       //cheat hack to force atoms to move back towards the original grid positions if they move too far
       var dX, dY, mag;
+      var tweak = 1.1; //relative homing force at gridSize distance from original spot
       dX = atom.x - atom.oX;
       dY = atom.y - atom.oY;
-      mag = Math.pow(dist(dX, dY)/100, 4);
-      atom.deltaX -= dX;
-      atom.deltaY -= dY;
+      mag = dist(dX, dY) / gridSize * tweak;
+      atom.ddX -= dX * mag;
+      atom.ddY -= dY * mag;
+   }
+
+   function clampEnergy(atom){
+      //extra energy dampening if energy is too high
+      var velClamp = 2.5;
+      var accClamp = 2.0
+      atom.dX = Math.min(atom.dX, velClamp);
+      atom.dY = Math.min(atom.dY, velClamp);
+      atom.ddX = Math.min(atom.ddX, accClamp);
+      atom.ddY = Math.min(atom.ddY, accClamp);
+   }
+
+   function drawAtom(atom){
+      var offsetX = lCanvas.width / 2;
+      var offsetY = lCanvas.height / 2;
+      if(atom.isFixed == false){
+            atom.ddX = 0;
+            atom.ddY = 0;
+            atom.dX *= (dissipation);
+            atom.dY *= (dissipation);
+            calcThermal(atom);
+            calcNeighborForce(atom);
+            cheatToHome(atom);
+            clampEnergy(atom);
+            atom.dX += atom.ddX;
+            atom.x += atom.dX;
+            atom.dY += atom.ddY;
+            atom.y += atom.dY;
+         };
+         if(atom.isRepulsor > 0){
+            atom.isRepulsor--;
+            _Ctx.drawImage(rCanvas, atom.x - offsetX, atom.y - offsetY, rCanvas.width, rCanvas.height);
+         }
+         else{
+            _Ctx.drawImage(lCanvas, atom.x - offsetX, atom.y - offsetY, lCanvas.width, lCanvas.height);
+         }
+   }
+
+   function drawSprites(){
+      //setup offscreen canvas
+      lCanvas.width = (2 * radius) + 2;
+      lCanvas.height = (2 * radius) + 2;
+      //draw circle to copy
+      lCtx.beginPath();
+      lCtx.arc(lCanvas.width/2, lCanvas.width/2, radius - 10, 0, Math.PI*2, false);
+      lCtx.fillStyle = "#222";
+      lCtx.fill();
+      lCtx.closePath();
+
+      lCtx.beginPath();
+      lCtx.lineWidth = 2;
+      lCtx.strokeStyle = "#222";
+      lCtx.arc(lCanvas.width/2, lCanvas.height/2, radius - 4, 0, Math.PI*2, false);
+      lCtx.stroke();
+      lCtx.closePath();
+
+      lCtx.beginPath();
+      lCtx.arc(lCanvas/2, lCanvas.height/2 + radius - 4, 5, 0, Math.PI*2, false);
+      lCtx.fillStyle = "#222";
+      lCtx.fill();
+      lCtx.closePath();
+
+      //setup offscreen canvas for highlight
+      rCanvas.width = (2 * radius) + 2;
+      rCanvas.height = (2 * radius) + 2;
+      rCtx.arc(rCanvas.width/2, rCanvas.height/2,radius, 0, Math.PI*2, false);
+      rCtx.fillStyle = "#a22";
+      rCtx.fill();
    }
 
    function findNeighbors(){
       var tempDist;
       var tempX, tempY;
-      var modGridSize = gridSize * 1.1;
+      var modGridSize = gridSize * 1.2;
       var tempNeighbors = [];
       for(var rep=0;rep<aGrid.length;rep++){
          tempX = aGrid[rep].x;
@@ -266,17 +333,6 @@
       }
    };
 
-   function drawAtom(atom){
-      if(atom.isFixed == false){
-            calcThermal(atom);
-            calcNeighborForce(atom);
-            cheatToHome(atom);
-            atom.x += atom.deltaX;
-            atom.y += atom.deltaY;
-         };
-      _Ctx.drawImage(lCanvas, atom.x, atom.y, lWidth, lHeight);
-   }
-
    namespace.about = "Simulation of lattice vibrations";
    namespace.initBgVars = function(iCanvas, iCtx){
       _Canvas = iCanvas;
@@ -286,15 +342,7 @@
       kT = 0.1;
       radius = gridSize / 3;
 
-      //setup offscreen canvas
-      lCanvas.width = (2 * radius) + 2;
-      lWidth = lCanvas.width;
-      lCanvas.height = (2 * radius) + 2;
-      lHeight = lCanvas.height;
-      //draw circle to copy
-      lCtx.arc(lCanvas.width/2, lCanvas.width/2, radius, 0, Math.PI*2, false);
-      lCtx.fillStyle = "#222";
-      lCtx.fill();
+      drawSprites();
 
       var xGrid = _Canvas.width / gridSize;
       xGrid += 4;
@@ -308,22 +356,37 @@
             tempX = (-2*gridSize) + (0.5*gridSize*(rep%2)) + (rep2*gridSize);
             tempY = rowHeight*rep - (2*rowHeight);
             aGrid.push({
-               x: tempX,
-               y: tempY,
+               n: 0,
                oX: tempX,
                oY: tempY,
-               deltaX: 0,
-               deltaY: 0,
+               x: tempX,
+               y: tempY,
+               dX: 0,
+               dY: 0,
+               ddX: 0,
+               ddY: 0,
                isFixed: ((tempX> -gridSize)&&(tempY> -rowHeight)&&(tempX<_Canvas.width)&&(tempY<_Canvas.height)) ? false : true,
-               isRepulsor: false,
+               isRepulsor: 0, //is repuslor if > 0
                neighbors: []
             });
          }
       }
+      for(var rep=0;rep<aGrid.length;rep++){
+         aGrid[rep].n = rep;
+      }
       findNeighbors();
    };
 
-   namespace.userInput = function(iX, iY){
+   namespace.userInput = function(event){
+      if(event.type == "mousedown"){
+         var tempX = event.clientX;
+         var tempY = event.clientY; 
+         for(var rep=0;rep<aGrid.length;rep++){
+            if(dist(aGrid[rep].x - tempX, aGrid[rep].y - tempY) < (radius)){
+               aGrid[rep].isRepulsor = 5;
+            }
+         }
+      }
    };
 
    namespace.updateBgCanvas = function(){

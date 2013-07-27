@@ -358,7 +358,7 @@
       };
       resizeCanvas();
 
-      bgVars.selectBG(0);
+      bgVars.selectBG(1);
       bgVars.initBgVars(myCanvas, myCtx);
 
       window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 
@@ -390,16 +390,13 @@
 
       $("#background-canvas").on({
          mousedown: function(event){
-            bgVars.mouseActive = true;
+            bgVars.userInput(event);
          },
          mouseup: function(event){
-            bgVars.mouseActive = false;
+            bgVars.userInput(event);
          },
          mousemove: function(event){
-            if(bgVars.mouseActive == true){
-               bgVars.userInput(event.pageX, event.pageY);
-               //console.log(event);
-            }
+            bgVars.userInput(event);
          }
       });
 
