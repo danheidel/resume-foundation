@@ -358,7 +358,7 @@
       };
       resizeCanvas();
 
-      bgVars.selectBG(1);
+      bgVars.selectBG((Math.random()*2)>>0);
       bgVars.initBgVars(myCanvas, myCtx);
 
       window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 

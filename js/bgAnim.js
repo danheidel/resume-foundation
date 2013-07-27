@@ -190,17 +190,21 @@
 (function(namespace){  //lattice
    var _Canvas = {};
    var _Ctx = {};
-   //var lCanvas = [];
-   //var lCtx = [];
-   var lCanvas = document.createElement('canvas');
-   var lCtx = lCanvas.getContext('2d');
+   var lCanvas = [];
+   var lCtx = [];
    var rCanvas = document.createElement('canvas');
    var rCtx = rCanvas.getContext('2d');
+   var animationFrame = 0;
+   var numFrames = 24;
    var aGrid = [];
-   var gridSize, rowHeight;
+   var gridSize = 50;
+   var rowHeight;
    var radius;
-   var kT;
-   var dissipation = 0.87; //energy loss factor per round
+   var kT = 0.15;
+   var dissipation = 0.70; //energy loss factor per round //.87
+   var dissCycle = 0;
+   var bgColor = "rgb(100, 0, 0)";
+
 
    function dist(dX, dY){
       var distMag = Math.sqrt((dX * dX) + (dY * dY));
@@ -222,8 +226,8 @@
          dX = (atom.x - atom.neighbors[rep].x);
          dY = (atom.y - atom.neighbors[rep].y);
          mag = (gridSize - dist(dX, dY)) / gridSize;
-         if(atom.neighbors[rep].isRepulsor > 0){
-            atom.isRepulsor = 1;
+         if(atom.neighbors[rep].isRepulsor > atom.isRepulsor){
+            atom.isRepulsor = atom.neighbors[rep].isRepulsor - 1;;
             mag += 1;
          }
 
@@ -256,8 +260,8 @@
    }
 
    function drawAtom(atom){
-      var offsetX = lCanvas.width / 2;
-      var offsetY = lCanvas.height / 2;
+      var offsetX = lCanvas[0].width / 2;
+      var offsetY = lCanvas[0].height / 2;
       if(atom.isFixed == false){
             atom.ddX = 0;
             atom.ddY = 0;
@@ -273,37 +277,46 @@
             atom.y += atom.dY;
          };
          if(atom.isRepulsor > 0){
-            atom.isRepulsor--;
+            //atom.isRepulsor--;
             _Ctx.drawImage(rCanvas, atom.x - offsetX, atom.y - offsetY, rCanvas.width, rCanvas.height);
          }
          else{
-            _Ctx.drawImage(lCanvas, atom.x - offsetX, atom.y - offsetY, lCanvas.width, lCanvas.height);
+            _Ctx.drawImage(lCanvas[(atom.n + animationFrame)%numFrames], atom.x - offsetX, atom.y - offsetY, lCanvas[0].width, lCanvas[0].height);
          }
+         if(Math.random() < 0.00006) {atom.isRepulsor = 5;}
    }
 
    function drawSprites(){
-      //setup offscreen canvas
-      lCanvas.width = (2 * radius) + 2;
-      lCanvas.height = (2 * radius) + 2;
-      //draw circle to copy
-      lCtx.beginPath();
-      lCtx.arc(lCanvas.width/2, lCanvas.width/2, radius - 10, 0, Math.PI*2, false);
-      lCtx.fillStyle = "#222";
-      lCtx.fill();
-      lCtx.closePath();
+      //setup offscreen canvases
+      for(var rep=0;rep<numFrames;rep++){
+         lCanvas.push(document.createElement('canvas'));
+         lCanvas[rep].width = (2 * radius) + 2;
+         lCanvas[rep].height = (2 * radius) + 2;
+         lCtx.push(lCanvas[rep].getContext('2d'));
 
-      lCtx.beginPath();
-      lCtx.lineWidth = 2;
-      lCtx.strokeStyle = "#222";
-      lCtx.arc(lCanvas.width/2, lCanvas.height/2, radius - 4, 0, Math.PI*2, false);
-      lCtx.stroke();
-      lCtx.closePath();
+         lCtx[rep].translate(lCanvas[rep].width / 2, lCanvas[rep].height / 2);
+         lCtx[rep].rotate(rep * (Math.PI * 2 / numFrames));
 
-      lCtx.beginPath();
-      lCtx.arc(lCanvas/2, lCanvas.height/2 + radius - 4, 5, 0, Math.PI*2, false);
-      lCtx.fillStyle = "#222";
-      lCtx.fill();
-      lCtx.closePath();
+         //draw atom to copy
+         lCtx[rep].beginPath();
+         lCtx[rep].arc(0, 0, radius - 9, 0, Math.PI*2, false);
+         lCtx[rep].fillStyle = "#222";
+         lCtx[rep].fill();
+         lCtx[rep].closePath();
+
+         lCtx[rep].beginPath();
+         lCtx[rep].arc(0, radius - 4, 3, 0, Math.PI*2, false);
+         lCtx[rep].fillStyle = "#222";
+         lCtx[rep].fill();
+         lCtx[rep].closePath();
+
+         lCtx[rep].beginPath();
+         lCtx[rep].lineWidth = 2;
+         lCtx[rep].strokeStyle = "#222";
+         lCtx[rep].arc(0, 0, radius - 4, 0, Math.PI*2, false);
+         lCtx[rep].stroke();
+         lCtx[rep].closePath();
+      }
 
       //setup offscreen canvas for highlight
       rCanvas.width = (2 * radius) + 2;
@@ -311,6 +324,15 @@
       rCtx.arc(rCanvas.width/2, rCanvas.height/2,radius, 0, Math.PI*2, false);
       rCtx.fillStyle = "#a22";
       rCtx.fill();
+   }
+
+   function dampenCycle(){
+      var invDiss = (dissCycle + 180) % 360;
+      dissipation = 0.78 + 0.1 * (Math.cos((Math.PI / 180) * dissCycle)); // 1 degree per cycle
+      bgColor = 'rgb(' + (((Math.cos((Math.PI / 180 ) * dissCycle) * 49) << 0) + 50) + ', ' + (((Math.cos((Math.PI / 180) * invDiss) * 44) << 0) + 45) + ', ' + (((Math.cos((Math.PI / 180) * invDiss) * 44) << 0) + 45) + ')';
+      dissCycle += 0.35;
+      dissCycle %= 360;
+      console.log(dissCycle);
    }
 
    function findNeighbors(){
@@ -338,8 +360,6 @@
       _Canvas = iCanvas;
       _Ctx = iCtx;
       aGrid = [];
-      gridSize = 50;
-      kT = 0.1;
       radius = gridSize / 3;
 
       drawSprites();
@@ -391,13 +411,22 @@
 
    namespace.updateBgCanvas = function(){
       //console.time('updateBgCanvas');
-      myCtx.fillStyle = "rgb(100,0,0)";
+      //myCtx.fillStyle = "rgb(100,0,0)";
+      myCtx.fillStyle = bgColor;
       myCtx.fillRect(0, 0, myCanvas.width, myCanvas.height);
       for(var rep=0;rep<aGrid.length;rep++){
          //console.time('drawMe');
          drawAtom(aGrid[rep]);
          //console.timeEnd('drawMe');
       }
+      for(var rep=0;rep<aGrid.length;rep++){
+         if(aGrid[rep].isRepulsor > 0){
+            aGrid[rep].isRepulsor--;
+         }
+      }
+      animationFrame++;
+      animationFrame %= 24;
+      dampenCycle();
       //console.time('fill');
       //console.timeEnd('fill');
       //console.timeEnd('updateBgCanvas');
