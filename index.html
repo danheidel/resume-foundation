@@ -16,9 +16,7 @@
 
 </head>
 <body>
-   <canvas id="background-canvas">
-
-   </canvas>
+   <canvas id="background-canvas"></canvas>
 	<div class="row">
 		<div class="small-12 large-7 columns hide-for-small">
          <div class="title-header">
@@ -94,7 +92,7 @@
                   </li>
                </ul>
             </li>
-            <li class="has-dropdown" id="info-menu"><a href="#"><i class="icon-info icon-large"></i></a>
+            <li class="has-dropdown" id="info-menu"><a><i class="icon-info icon-large"></i></a>
                <ul class="dropdown">
                   <li class="divider">
                      <div class="panel top-bar" id="about-content">
@@ -102,9 +100,6 @@
                            <img width="35px" height="35px" src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
                         </a>
                         <p>This is a place to showcase some of the stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
-
-                        <h1> test123 </h1>
-                        <p id="bgInfo"></p>
                      </div>
                   </li>
                </ul>
@@ -112,8 +107,12 @@
             <li>
                <a id="hideAll"><i class="icon-minus-sign-alt icon-large"></i></a>
             </li>
-            <li>
-               <a id="bgOptions"><i class="icon-cog icon-large"></i></a>
+            <li class="has-dropdown" id="bgOptions"><a><i class="icon-cog icon-large"></i></a>               
+               <ul class="dropdown">
+                  <div class="panel top-bar" id="about-content">
+                     <p id="bgInfo"></p>
+                  </div>
+               </ul>
             </li>
           </ul>
         </section>
@@ -162,99 +161,25 @@
    <script src="js/RaFlib.js"></script>
    <script src="js/bgAnim.js"></script>
 
-   <script id="main-template" type="text/x-handlebars-template">
-      {{#each model-content}}
-         {{> row-parse}}
+   <script id="omni-template" type="text/x-handlebars-template">
+      {{#each main-content}}
+         {{> omni-parse}}
       {{/each}}
    </script>
 
-   <script id="inner-parse" type="x-handlebars-template">
-      {{#if p}}<p>{{p}}</p>{{/if}}
-      {{#if t}}{{t}}{{/if}}
-      {{#if h1}}<h1>{{h1}}</h1>{{/if}}
-      {{#if h2}}<h2>{{h2}}</h2>{{/if}}
-      {{#if h3}}<h3>{{h3}}</h3>{{/if}}
-      {{#if h4}}<h4>{{h4}}</h4>{{/if}}
-      {{#if h5}}<h5>{{h5}}</h5>{{/if}}
-      {{#if blockq}}<blockquote>{{blockq}}</blockquote>{{/if}}
-      {{#if br}}<br />{{/if}}
-      {{#if img}}<img src="{{img}}" />{{/if}}
-      {{#if a}}<a href="{{a.href}}"{{#if a.pop}} target='_blank' {{/if}}>{{#with a.link}}{{> inner-parse}}{{/with}}</a>{{/if}}
-      {{#if ul}}
-         <ul class="{{{ul.[0].style}}}">
-         {{#each ul}}
-            {{> inner-parse}}
-         {{/each}}
-         </ul>
-      {{/if}}
-      {{#if ol}}
-         <ol class="{{{ol.[0].style}}}>">
-         {{#each ol}}
-            {{> inner-parse}}
-         {{/each}}
-         </ol>
-      {{/if}}
-      {{#if dl}}
-         <dl class="{{{dl.[0].style}}}>">
-         {{#each dl}}
-            {{> inner-parse}}
-         {{/each}}
-         </dl>
-      {{/if}}
-      {{#if li}}
-         <li>
-         {{#each li}}
-            {{> inner-parse}}
-         {{/each}}
-         </li>
-      {{/if}}
-      {{#if hr}}<hr></hr>{{/if}}
-      {{#if embed}}{{{embed}}}{{/if}}
-      {{#if row}}{{> row-parse}}{{/if}}
-      {{#if caro}}
-         <ul data-orbit>
-         {{#each caro}}
-            <li>
-               {{> inner-parse}}
-               {{#if caption}}<div class="orbit-caption">{{caption}}</div>{{/if}}
-            </li>
-         {{/each}}
-         </ul>
-      {{/if}}
-   </script>
-
-   <script id="panel-parse" type="x-handlebars-template">
-      {{! gets a panel}}
-      <div class="{{{panel.[0].format}}} columns">
-         <div class="panel {{{panel.[1].style}}}">
-            {{#each panel}}
-               {{> inner-parse}}
-            {{/each}}
-         </div>
-      </div>
-   </script>
-
-   <script id="row-parse" type="x-handlebars-template">
-      {{! gets a row}}
-      <div class="row">
-         {{#each row}}
-            {{> panel-parse}}
-         {{/each}}
-      </div>
-   </script>
-
-   <script id="about-template" type="text/handlebars-template">
-
-   </script>
+   <!--let's hope to hell this never, ever has to be debugged again-->
+   <script id="omni-parse" type="text/x-handlebars-template">{{#if panel}}<div{{#if ../colId}} id="{{../colId}}"{{/if}} class="{{../colClass}} columns">
+      <div{{#if ../panelId}} id="{{../panelId}}"{{/if}} class="panel{{#if ../panelClass}} {{../panelClass}}{{/if}}">{{/if}}{{#if is}}<{{is}}{{#if id}} id="{{id}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}{{#if href}} href="{{href}}"{{/if}}{{#if src}} src="{{src}}"{{/if}}{{#if target}} target={{target}}{{/if}}{{#if width}} width="{{width}}"{{/if}}{{#if height}} height="{{height}}"{{/if}}{{#if attr}}{{{attr}}}{{/if}}>{{/if}}{{#if content}}{{content}}{{/if}}{{#each children}}
+      {{> omni-parse}}
+      {{/each}}{{#if is}}</{{is}}>{{/if}}{{#if panel}}</div>
+      </div>{{/if}}{{#if embed}}{{{embed}}}{{/if}}</script>
 
    <script>
    $(document).foundation();
    $(function($){
       window.pageVars = {};
 
-      Handlebars.registerPartial("inner-parse", $('#inner-parse').html());
-      Handlebars.registerPartial("panel-parse", $('#panel-parse').html());
-      Handlebars.registerPartial("row-parse", $('#row-parse').html());
+      Handlebars.registerPartial("omni-parse", $('#omni-parse').html());
 
       var oGridContent = Backbone.Model.extend({
          defaults: {"model-content": ""}
@@ -272,13 +197,14 @@
             mainHTML: ""
          },
          initialize: function(){
-            this.mainSource = $('#main-template').html();
+            this.mainSource = $('#omni-template').html();
             this.mainTemplate = Handlebars.compile(this.mainSource);
             this.listenTo(this.model, "change", this.render);
          },
          render: function(){
             this.mainContext = {
-               "model-content": this.model.get("modelContent")
+               "main-content": this.model.get("mainContent")
+               //"model-content": this.model.get("modelContent")
             };
 
             this.mainHTML = this.mainTemplate(this.mainContext);
@@ -360,17 +286,11 @@
 
       bgVars.selectBG((Math.random()*2)>>0);
       bgVars.initBgVars(myCanvas, myCtx);
+      $("#bgInfo").html(bgVars.about);
 
       window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 
-      intervalHandle.oldTime = Date.now();
-      intervalHandle.timeDelta = 0;
-      intervalHandle.updateTime = 0;
 
       function updateCanvas(){
-         //calculate time delta
-         //intervalHandle.timeDelta = Date.now() - intervalHandle.oldTime;
-         //$('#sub-title').text(Date.now() + "   delta: " + intervalHandle.timeDelta + "   FPS: " + (1/(intervalHandle.timeDelta/1000)).toPrecision(4));
-         //intervalHandle.oldTime = Date.now();
          bgVars.updateBgCanvas();
       }
 

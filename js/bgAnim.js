@@ -149,7 +149,7 @@
       cGrid2 = new Uint8Array(xBlocks * yBlocks);
    };
    namespace.userInput = function(event){
-      console.log(event);
+      //console.log(event);
       //var gridX = Math.round(iX / xBlockSize);
       //var gridY = Math.round(iY / yBlockSize);
       //cGrid[gridX + (gridY * xBlocks)] = 1;
@@ -435,12 +435,12 @@
 
 //*****************************************************************************************************************
 
-(function(namespace){  //lattice
+(function(namespace){  //boids
    var _Canvas = {};
    var _Ctx = {};
    var fArray = [];
 
-   namespace.about = "This is the famous Conway Game of Life";
+   namespace.about = "This is a 2D version of the famous 1984 flock simulator Boids";
    namespace.initBgVars = function(iCanvas, iCtx){
    };
    namespace.userInput = function(event){
@@ -457,20 +457,17 @@ bgVars.selectBG = function(selector){
       bgVars.initBgVars = bgVars.GoL.initBgVars;
       bgVars.userInput = bgVars.GoL.userInput;
       bgVars.updateBgCanvas = bgVars.GoL.updateBgCanvas;
-      $("#bgInfo").html(bgVars.about);
    }
    if(selector == 1){
       bgVars.about = bgVars.lattice.about;
       bgVars.initBgVars = bgVars.lattice.initBgVars;
       bgVars.userInput = bgVars.lattice.userInput;
       bgVars.updateBgCanvas = bgVars.lattice.updateBgCanvas;
-      $("#bgInfo").html(bgVars.about);
    }
    if(selector == 2){
       bgVars.about = bgVars.flock.about;
       bgVars.initBgVars = bgVars.flock.initBgVars;
       bgVars.userInput = bgVars.flock.userInput;
       bgVars.updateBgCanvas = bgVars.flock.updateBgCanvas;
-      $("#bgInfo").html(bgVars.about);
    }
 };
