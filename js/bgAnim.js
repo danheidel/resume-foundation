@@ -1,5 +1,8 @@
 (function(){  //setup bgVars
    window.bgVars || (window.bgVars = {});
+   bgVars.visualizations = {};
+   bgVars.incompletevisualizations = {};
+   bgVars.selectedBG = -1;
 })();
 
 //set up vars for game of life
@@ -133,7 +136,33 @@
       //console.timeEnd('render');
    };
 
+   namespace.name = "Game of Life";
    namespace.about = "This is the famous Conway Game of Life";
+   namespace.control = {
+      mainContent: [
+         {tag:"h4",
+         c:"This background visualization is Game of Life."},
+         {tag:"p",
+         c:"It is a recreation of the famous cellular automata algorithm created by John Conway."},
+         {tag:"h4",
+         c:"Choose a background visualization!"},
+         {},
+         {tag:"a", class:"close-reveal-modal", c:"X"},
+         {tag:"div",
+         class:"panel",
+         children:[
+            {tag:"p",
+            id:"bgVizOptionsGoLGridsize",
+            c:"Adjust the gridsize. Current gridsize = " + this.xBlockSize},
+            {tag:"p",
+            c:"Warning - gridsize of 1 will run very slowly"},
+            {tag:"input",
+            type:"checkbox",
+            name:"foo",
+            value:"foo"},
+         ]}
+      ]
+   },
    namespace.initBgVars = function(iCanvas, iCtx){
       var seedVals = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 39, 43, 47];
       _Canvas = iCanvas;
@@ -150,9 +179,9 @@
    };
    namespace.userInput = function(event){
       //console.log(event);
-      //var gridX = Math.round(iX / xBlockSize);
-      //var gridY = Math.round(iY / yBlockSize);
-      //cGrid[gridX + (gridY * xBlocks)] = 1;
+      var gridX = Math.round(event.clientX / xBlockSize);
+      var gridY = Math.round(event.clientY / yBlockSize);
+      cGrid[gridX + (gridY * xBlocks)] = 1;
    };
    namespace.updateBgCanvas = function(){
       //convert grid data to graphics data for drawing
@@ -183,7 +212,7 @@
       //copy calculate next gen values back into working array
       cGrid.set(cGrid2);
    };
-})(bgVars.GoL = bgVars || {});
+})(bgVars.visualizations.GoL = bgVars.visualizations.GoL || {});
 
 //*****************************************************************************************************************
 
@@ -355,12 +384,32 @@
       }
    };
 
+   namespace.name = "Lattice";
    namespace.about = "Simulation of lattice vibrations";
+   namespace.control = {
+      mainContent: [
+         {tag:"h4",
+         c:"The current background visualization is Lattice."},
+         {tag:"p",
+         c:"This is possibly the least-realistic atomic lattice vibration simulator ever made."},
+         {tag:"h4",
+         c:"Choose a background visualization!"},
+         {},
+         {tag:"a", class:"close-reveal-modal", c:"X"},
+         {tag:"div",
+         class:"panel",
+         children:[
+            {tag:"p",
+            c:"No controls for this! :("}
+         ]}
+      ],
+   };
    namespace.initBgVars = function(iCanvas, iCtx){
       _Canvas = iCanvas;
       _Ctx = iCtx;
       aGrid = [];
       radius = gridSize / 3;
+      dissCycle = 0;
 
       drawSprites();
 
@@ -431,7 +480,7 @@
       //console.timeEnd('fill');
       //console.timeEnd('updateBgCanvas');
    };
-})(bgVars.lattice = bgVars.lattice || {});
+})(bgVars.visualizations.lattice = bgVars.visualizations.lattice || {});
 
 //*****************************************************************************************************************
 
@@ -440,34 +489,122 @@
    var _Ctx = {};
    var fArray = [];
 
+   namespace.name = "Flock";
    namespace.about = "This is a 2D version of the famous 1984 flock simulator Boids";
+   namespace.control = {
+      mainContent: [
+         {tag:"h4",
+         c:"The current background visualization is Flock."},
+         {tag:"p",
+         c:"This is a variant of the famous 1986 flocking behavior simulator Boids created by Craig Reynolds."},
+         {tag:"h4",
+         c:"Choose a background visualization!"},
+         {},
+         {tag:"a", class:"close-reveal-modal", c:"X"},
+         {tag:"div",
+         class:"panel",
+         children:[
+            {tag:"p",
+            c:" "}
+         ]}
+      ]
+   },
    namespace.initBgVars = function(iCanvas, iCtx){
    };
    namespace.userInput = function(event){
    };
    namespace.updateBgCanvas = function(){
    };
-})(bgVars.flock = bgVars.flock || {});
+})(bgVars.incompletevisualizations.flock = bgVars.incompletevisualizations.flock || {});
 
 //*****************************************************************************************************************
 
+bgVars.initBG = function(elem){
+   var oBgModel = Backbone.Model.extend({
+      defaults: {"main-content": ""}
+   })
+
+   bgVars.bgModel = new oBgModel;
+
+   var oBgView = Backbone.View.extend({
+      el: elem,
+      model:bgVars.bgModel,
+      defaults: {
+         bgSource: "",
+         bgTemplate: "",
+         bgContext: "",
+         bgHTML: ""
+      },
+      initialize: function(){
+         this.bgSource = $('#omni-template').html();
+         this.bgTemplate = Handlebars.compile(this.bgSource);
+         this.listenTo(this.model, "change", this.render);
+      },
+      render: function(){
+         this.bgContext = {
+            "omni-content": this.model.get("mainContent")
+         };
+
+         this.bgHTML = this.bgTemplate(this.bgContext);
+         this.el.innerHTML = this.bgHTML;
+
+         $('#bgVizSelect').on({
+            focus: function(event){
+               event.currentTarget.selectedIndex = bgVars.selectedBG;
+            },
+            change: function(event){
+               bgVars.selectBG(event.currentTarget.selectedIndex);
+               bgVars.initBgVars(myCanvas, myCtx);
+            }
+         });
+      
+      return this;
+      }         
+   });
+
+   bgVars.bgView = new oBgView;
+
+   bgVars.vizList = [];
+
+   _.each(bgVars.visualizations, function(element){
+      bgVars.vizList.push(element.name);
+   });
+
+   var tempRow = 
+      {tag:"div",
+      class:"row",
+      children:[
+         {tag:"select",
+         id:"bgVizSelect",
+         name:"visualization",
+         //attr:" onchange=\"alert('change');\"",
+         children:[
+         ]}       
+      ]};
+
+   _.each(bgVars.vizList, function(element, index){
+      tempRow.children[0].children.push({
+         tag:"option",
+         id:("bgVizOption"+index),
+         value:index,
+         c:element,
+      });
+   });
+
+   _.each(bgVars.visualizations, function(element){
+      element.control.mainContent[3] = tempRow;
+   });
+}
+
 bgVars.selectBG = function(selector){
-   if(selector == 0){
-      bgVars.about = bgVars.GoL.about;
-      bgVars.initBgVars = bgVars.GoL.initBgVars;
-      bgVars.userInput = bgVars.GoL.userInput;
-      bgVars.updateBgCanvas = bgVars.GoL.updateBgCanvas;
-   }
-   if(selector == 1){
-      bgVars.about = bgVars.lattice.about;
-      bgVars.initBgVars = bgVars.lattice.initBgVars;
-      bgVars.userInput = bgVars.lattice.userInput;
-      bgVars.updateBgCanvas = bgVars.lattice.updateBgCanvas;
-   }
-   if(selector == 2){
-      bgVars.about = bgVars.flock.about;
-      bgVars.initBgVars = bgVars.flock.initBgVars;
-      bgVars.userInput = bgVars.flock.userInput;
-      bgVars.updateBgCanvas = bgVars.flock.updateBgCanvas;
-   }
+   selectedBG = selector;
+   var vizName = bgVars.vizList[selector%(_.size(bgVars.vizList))];
+   var viz = _.find(bgVars.visualizations, function(element){return (element.name == vizName);});
+
+   bgVars.name = viz.name;
+   bgVars.about = viz.about;
+   bgVars.initBgVars = viz.initBgVars;
+   bgVars.userInput = viz.userInput;
+   bgVars.updateBgCanvas = viz.updateBgCanvas;
+   bgVars.bgModel.set(viz.control);
 };

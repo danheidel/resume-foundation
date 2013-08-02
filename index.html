@@ -73,13 +73,12 @@
               </ul>
             </li>
             <li><a href="#cv" class="menu-item">CV</a></li>
-            <li><a href="#test" class="menu-item">Test</a></li>
           </ul>
 
           <ul class="right">
-            <li class="has-dropdown" id="contact-menu"><a href="#"><i class="icon-envelope icon-large"></i></a>
+            <li class="has-dropdown" id="contact-menu"><a><i class="icon-envelope icon-large"></i></a>
                <ul class="dropdown">
-                  <li><a href="" class="menu-item" style="text-align: center"><i class="icon-envelope icon-2x"></i></a>
+                  <li><a href="" data-reveal-id="email-modal" data-reveal-ajax="true" class="menu-item" style="text-align: center"><i class="icon-envelope icon-2x"></i></a>
                   </li>
                   <li>
                      <a href="https://github.com/danheidel" class="menu-item" target="_blank" style="text-align: center">
@@ -88,7 +87,7 @@
                   </li>
                   <li><a href="https://twitter.com/dan_heidel" class="menu-item" target="_blank" style="text-align: center"><i class="icon-twitter-sign icon-3x"></i></a>
                   </li>
-                  <li><a href="https://www.linkedin.com/profile/view?id=43637762twitter" class="menu-item" target="_blank" style="text-align: center"><i class="icon-linkedin-sign icon-3x"></i></a>
+                  <li><a href="https://www.linkedin.com/profile/view?id=43637762" class="menu-item" target="_blank" style="text-align: center"><i class="icon-linkedin-sign icon-3x"></i></a>
                   </li>
                </ul>
             </li>
@@ -100,6 +99,7 @@
                            <img width="35px" height="35px" src="img/under_construction/HeHeartlandForest8728imagesunderconstruction.gif" />
                         </a>
                         <p>This is a place to showcase some of the stuff I've been working on.  It's my first attempt at doing serious HTML5 coding so hopefully nothing is too broken. </p>
+                        <br></br>
                      </div>
                   </li>
                </ul>
@@ -107,12 +107,8 @@
             <li>
                <a id="hideAll"><i class="icon-minus-sign-alt icon-large"></i></a>
             </li>
-            <li class="has-dropdown" id="bgOptions"><a><i class="icon-cog icon-large"></i></a>               
-               <ul class="dropdown">
-                  <div class="panel top-bar" id="about-content">
-                     <p id="bgInfo"></p>
-                  </div>
-               </ul>
+            <li id="bgOptions">
+               <a data-reveal-id="bg-modal" data-reveal-ajax="true"><i class="icon-cog icon-large"></i></a>            
             </li>
           </ul>
         </section>
@@ -122,7 +118,7 @@
 	<div id="main-content"><!--templated data goes here--></div>
 
    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-   <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>    
+   <script>window.$ || document.write('<script src="js/vendor/jquery-2.0.3.js"><\/script')</script>  
    <!-- -->
    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
    <script>window._ || document.write('<script src="js/vendor/underscore-1.4.4.js"><\/script')</script>
@@ -162,17 +158,17 @@
    <script src="js/bgAnim.js"></script>
 
    <script id="omni-template" type="text/x-handlebars-template">
-      {{#each main-content}}
+      {{#each omni-content}}
          {{> omni-parse}}
       {{/each}}
    </script>
 
    <!--let's hope to hell this never, ever has to be debugged again-->
    <script id="omni-parse" type="text/x-handlebars-template">{{#if panel}}<div{{#if ../colId}} id="{{../colId}}"{{/if}} class="{{../colClass}} columns">
-      <div{{#if ../panelId}} id="{{../panelId}}"{{/if}} class="panel{{#if ../panelClass}} {{../panelClass}}{{/if}}">{{/if}}{{#if is}}<{{is}}{{#if id}} id="{{id}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}{{#if href}} href="{{href}}"{{/if}}{{#if src}} src="{{src}}"{{/if}}{{#if target}} target={{target}}{{/if}}{{#if width}} width="{{width}}"{{/if}}{{#if height}} height="{{height}}"{{/if}}{{#if attr}}{{{attr}}}{{/if}}>{{/if}}{{#if content}}{{content}}{{/if}}{{#each children}}
+      <div{{#if ../panelId}} id="{{../panelId}}"{{/if}} class="panel{{#if ../panelClass}} {{../panelClass}}{{/if}}">{{/if}}{{#if tag}}<{{tag}}{{#if id}} id="{{id}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}{{#if name}} name="{{name}}"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if type}} type="{{type}}"{{/if}}{{#if href}} href="{{href}}"{{/if}}{{#if src}} src="{{src}}"{{/if}}{{#if target}} target={{target}}{{/if}}{{#if width}} width="{{width}}"{{/if}}{{#if height}} height="{{height}}"{{/if}}{{#if attr}}{{{attr}}}{{/if}}>{{/if}}{{#if content}}{{content}}{{/if}}{{#if c}}{{c}}{{/if}}{{#each children}}
       {{> omni-parse}}
-      {{/each}}{{#if is}}</{{is}}>{{/if}}{{#if panel}}</div>
-      </div>{{/if}}{{#if embed}}{{{embed}}}{{/if}}</script>
+      {{/each}}{{#if tag}}</{{tag}}>{{/if}}{{#if panel}}</div>
+      </div>{{/if}}{{#if htag}}<{{htag}}>{{/if}}{{#if embed}}{{{embed}}}{{/if}}</script>
 
    <script>
    $(document).foundation();
@@ -203,8 +199,7 @@
          },
          render: function(){
             this.mainContext = {
-               "main-content": this.model.get("mainContent")
-               //"model-content": this.model.get("modelContent")
+               "omni-content": this.model.get("mainContent")
             };
 
             this.mainHTML = this.mainTemplate(this.mainContext);
@@ -214,6 +209,40 @@
       });
 
       pageVars.gridView = new oGridView;
+
+      var oCaptchaModel = Backbone.Model.extend({
+         defaults: {"main-content": ""}
+      })
+
+      pageVars.captchaModel = new oCaptchaModel;
+
+      var oCaptchaView = Backbone.View.extend({
+         el: "#email-modal",
+         model:pageVars.captchaModel,
+         defaults: {
+            captchaSource: "",
+            captchaTemplate: "",
+            captchaContext: "",
+            captchaHTML: ""
+         },
+         initialize: function(){
+            this.captchaSource = $('#omni-template').html();
+            this.captchaTemplate = Handlebars.compile(this.captchaSource);
+            this.listenTo(this.model, "change", this.render);
+            pageVars.captchaModel.set(templateData.captchaRedData);
+         },
+         render: function(){
+            this.captchaContext = {
+               "omni-content": this.model.get("mainContent")
+            };
+
+            this.captchaHTML = this.captchaTemplate(this.captchaContext);
+            this.el.innerHTML = this.captchaHTML;
+            return this;
+         }         
+      });
+
+      pageVars.captchaView = new oCaptchaView;
 
       var oRouter = Backbone.Router.extend({
          routes: {
@@ -284,9 +313,9 @@
       };
       resizeCanvas();
 
+      bgVars.initBG($('#bg-modal'));
       bgVars.selectBG((Math.random()*2)>>0);
       bgVars.initBgVars(myCanvas, myCtx);
-      $("#bgInfo").html(bgVars.about);
 
       window.intervalHandle = requestInterval(function(){ updateCanvas(); } , 50); 
 
@@ -310,6 +339,26 @@
 
       $('.menu-item, a.parent-link').click(function(){
          $('.top-bar, [data-topbar]').css('height', '').removeClass('expanded');
+      });
+
+      $('.captchaButton').on({
+         click: function(event){
+            function checkCaptcha(){
+               //if(!$('.captchaButton').hasClass('alert')){
+               if($('.captchaButton.alert').length == $('.captchaButton').length){
+                  pageVars.captchaModel.set(templateData.captchaVerifiedContent);
+               }
+            };
+            if(_.contains(event.currentTarget.classList, "alert")){
+               event.currentTarget.classList.remove("alert");
+               event.currentTarget.innerHTML = "blue";
+               checkCaptcha();
+            }else{
+               event.currentTarget.classList.add("alert");
+               event.currentTarget.innerHTML = "red";
+               checkCaptcha();
+            }
+         },
       });
 
       $("#background-canvas").on({
@@ -356,7 +405,8 @@
 
    </script>
 
-   <div id="construction-modal" class="reveal-modal">
-   </div>
+   <div id="construction-modal" class="reveal-modal"></div>
+   <div id="email-modal" class="reveal-modal tiny"></div>
+   <div id="bg-modal" class="reveal-modal small"></div>
 </body>
 </html>
