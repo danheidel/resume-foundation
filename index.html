@@ -17,6 +17,7 @@
 </head>
 <body>
    <canvas id="background-canvas"></canvas>
+   <canvas id="foreground-canvas"></canvas>
 	<div class="row">
 		<div class="small-12 large-7 columns hide-for-small">
          <div class="title-header">
@@ -29,7 +30,7 @@
       <nav class="top-bar">
         <ul class="title-area">
           <!-- Title Area -->
-          <li class="name">
+          <li class="name"></li>
           <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
           <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
         </ul>
@@ -73,6 +74,7 @@
               </ul>
             </li>
             <li><a href="#cv" class="menu-item">CV</a></li>
+            <li><a href="#editor" class="menu-item">Editor</a></li>
           </ul>
 
           <ul class="right">
@@ -152,7 +154,7 @@
    <script src="js/foundation/foundation.interchange.js"></script>  
    <script src="js/foundation/foundation.placeholder.js"></script>  
    -->
-
+   <script src="js/es5shim.js"></script>
    <script src="js/template.js"></script>
    <script src="js/RaFlib.js"></script>
    <script src="js/bgAnim.js"></script>
@@ -167,7 +169,8 @@
    <script id="omni-parse" type="text/x-handlebars-template">{{#if panel}}<div{{#if ../colId}} id="{{../colId}}"{{/if}} class="{{../colClass}} columns">
       <div{{#if ../panelId}} id="{{../panelId}}"{{/if}} class="panel{{#if ../panelClass}} {{../panelClass}}{{/if}}">{{/if}}{{#if tag}}<{{tag}}{{#if id}} id="{{id}}"{{/if}}{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}{{#if name}} name="{{name}}"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if type}} type="{{type}}"{{/if}}{{#if href}} href="{{href}}"{{/if}}{{#if src}} src="{{src}}"{{/if}}{{#if target}} target={{target}}{{/if}}{{#if width}} width="{{width}}"{{/if}}{{#if height}} height="{{height}}"{{/if}}{{#if attr}}{{{attr}}}{{/if}}>{{/if}}{{#if content}}{{content}}{{/if}}{{#if c}}{{c}}{{/if}}{{#each children}}
       {{> omni-parse}}
-      {{/each}}{{#if tag}}</{{tag}}>{{/if}}{{#if panel}}</div>
+      {{/each}}{{#each chi}}
+      {{> omni-parse}}{{/each}}{{#if tag}}</{{tag}}>{{/if}}{{#if panel}}</div>
       </div>{{/if}}{{#if htag}}<{{htag}}>{{/if}}{{#if embed}}{{{embed}}}{{/if}}</script>
 
    <script>
@@ -198,9 +201,10 @@
             this.listenTo(this.model, "change", this.render);
          },
          render: function(){
-            this.mainContext = {
-               "omni-content": this.model.get("mainContent")
-            };
+            var tempContent = [];
+            if("menuContent" in this.model.attributes){this.model.get("menuContent").forEach(function(element){tempContent.push(element);});};
+            if("mainContent" in this.model.attributes){this.model.get("mainContent").forEach(function(element){tempContent.push(element);});};
+            this.mainContext = {"omni-content": tempContent};
 
             this.mainHTML = this.mainTemplate(this.mainContext);
             this.el.innerHTML = this.mainHTML;
@@ -256,6 +260,7 @@
             "electronics": "goElectronics",
             "cv": "goCV",
             "test": "goTest",
+            "editor": "goEditor",
          },
          goHome: function(){
             pageVars.gridContent.set(templateData.mainData);
@@ -295,6 +300,10 @@
             pageVars.gridContent.set(templateData.testData);
             Foundation.libs.orbit.init();
          },
+         goEditor: function(){
+            pageVars.gridContent.set(templateData.editorData);
+            Foundation.libs.orbit.init();
+         },
 
       });
       window.myRouter = new oRouter;
@@ -302,6 +311,8 @@
 
       window.myCanvas = document.getElementById("background-canvas");
       window.myCtx = myCanvas.getContext('2d');
+      window.editorCanvas = document.getElementById("foreground-canvas");
+      window.editorCtx = editorCanvas.getContext('2d');
 
       function resizeCanvas(){
          myCanvas.width = ($(this).innerWidth());
@@ -310,6 +321,8 @@
          myCtx.gArray = myCtx.imageData.data; // data is a Uint8ClampedArray
          myCtx.fillStyle = "rgb(100,0,0)";
          myCtx.fillRect(0, 0, myCanvas.width, myCanvas.height);
+         editorCanvas.width = $(this).innerWidth();
+         editorCanvas.height = $(this).innerHeight();
       };
       resizeCanvas();
 
@@ -341,24 +354,28 @@
          $('.top-bar, [data-topbar]').css('height', '').removeClass('expanded');
       });
 
-      $('.captchaButton').on({
-         click: function(event){
-            function checkCaptcha(){
-               //if(!$('.captchaButton').hasClass('alert')){
-               if($('.captchaButton.alert').length == $('.captchaButton').length){
-                  pageVars.captchaModel.set(templateData.captchaVerifiedContent);
-               }
-            };
-            if(_.contains(event.currentTarget.classList, "alert")){
-               event.currentTarget.classList.remove("alert");
-               event.currentTarget.innerHTML = "blue";
-               checkCaptcha();
-            }else{
-               event.currentTarget.classList.add("alert");
-               event.currentTarget.innerHTML = "red";
-               checkCaptcha();
+      $('#email-modal').on('click', '.captchaButton', function(event){
+         function checkCaptcha(){
+            if($('.captchaButton.alert').length == $('.captchaButton').length){
+               pageVars.captchaModel.set(templateData.captchaVerifiedContent);
             }
-         },
+         };
+         if(_.contains(event.currentTarget.classList, "alert")){
+            event.currentTarget.classList.remove("alert");
+            event.currentTarget.innerHTML = "blue";
+            checkCaptcha();
+         }else{
+            event.currentTarget.classList.add("alert");
+            event.currentTarget.innerHTML = "red";
+            checkCaptcha();
+         }
+      });
+
+      $('#main-content').on('click', '.editor-item', function(event){
+         //console.log("function: " + event.currentTarget.dataset.editorFunc + "   args: " + event.currentTarget.dataset.editorArgs);
+         //console.log(event);
+         //console.log($("#editor-" + event.currentTarget.dataset.editorFunc + "-" + event.currentTarget.dataset.editorArgs).offset());
+         templateData.editorData.funcContent[event.currentTarget.dataset.editorFunc](event);
       });
 
       $("#background-canvas").on({
@@ -397,9 +414,6 @@
                $("#info-menu").show(500);
             }
          }
-      });
-      $('bgOptions').on({
-
       });
    });
 
