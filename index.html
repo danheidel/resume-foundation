@@ -202,8 +202,8 @@
          },
          render: function(){
             var tempContent = [];
-            if("menuContent" in this.model.attributes){this.model.get("menuContent").forEach(function(element){tempContent.push(element);});};
-            if("mainContent" in this.model.attributes){this.model.get("mainContent").forEach(function(element){tempContent.push(element);});};
+            if("menu" in this.model.attributes){this.model.get("menu").forEach(function(element){tempContent.push(element);});};
+            if("body" in this.model.attributes){this.model.get("body").forEach(function(element){tempContent.push(element);});};
             this.mainContext = {"omni-content": tempContent};
 
             this.mainHTML = this.mainTemplate(this.mainContext);
@@ -237,7 +237,7 @@
          },
          render: function(){
             this.captchaContext = {
-               "omni-content": this.model.get("mainContent")
+               "omni-content": this.model.get("body")
             };
 
             this.captchaHTML = this.captchaTemplate(this.captchaContext);
@@ -301,7 +301,7 @@
             Foundation.libs.orbit.init();
          },
          goEditor: function(){
-            pageVars.gridContent.set(templateData.editorData);
+            pageVars.gridContent.set(templateData.editorData.attributes);
             Foundation.libs.orbit.init();
          },
 
@@ -375,7 +375,7 @@
          //console.log("function: " + event.currentTarget.dataset.editorFunc + "   args: " + event.currentTarget.dataset.editorArgs);
          //console.log(event);
          //console.log($("#editor-" + event.currentTarget.dataset.editorFunc + "-" + event.currentTarget.dataset.editorArgs).offset());
-         templateData.editorData.funcContent[event.currentTarget.dataset.editorFunc](event);
+         templateData.editorData.get("funcs")[event.currentTarget.dataset.editorFunc](event);
       });
 
       $("#background-canvas").on({

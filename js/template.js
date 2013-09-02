@@ -1,163 +1,171 @@
 window.templateFunctions || (window.templateFunctions = {});
 
 (function(NS){
-  NS.constructors = {};
-
   //basic parsing functions
-  NS.constructors.BaseParse = function(){};
-  NS.constructors.BaseParse.prototype.iconParse = function(tmplChunk, isEditor){
-    //asssumes the tmplChunk has already been tested to contain icon data
-    var icon = {
-      tag:"li",
-      chi:[
-        {tag:"a",
-        c:" icon-" + tmplChunk.icon,
+  NS.BaseParse = Backbone.Model.extend({
+    iconParse: function(tmplChunk, isEditor){
+      //asssumes the tmplChunk has already been tested to contain icon data
+      var icon = {
+        tag:"li",
         chi:[
-          {tag:"i",
-          class:"icon-" + tmplChunk.icon + " icon-2x"}
-        ]}
-    ]};
-    if(isEditor){
-      //makes the assumption that the icon name is same as the associated function 
-      icon.chi[0].id = "editor-icon-" + tmplChunk.icon;
-      icon.chi[0].class = "editor-item";
-      icon.chi[0].attr = " data-editor-func=\"icon\" data-editor-args=\"" + tmplChunk.icon + "\" ";
+          {tag:"a",
+          c:" icon-" + tmplChunk.icon,
+          chi:[
+            {tag:"i",
+            class:"icon-" + tmplChunk.icon + " icon-2x"}
+          ]}
+      ]};
+      if(isEditor){
+        //makes the assumption that the icon name is same as the associated function 
+        icon.chi[0].id = "editor-icon-" + tmplChunk.icon;
+        icon.chi[0].class = "editor-item";
+        icon.chi[0].attr = " data-editor-func=\"icon\" data-editor-args=\"" + tmplChunk.icon + "\" ";
+      }
+      return icon;
+    },
+    ahrefParse: function(tmplChunk, isEditor){
+      var ahref = {tag:"a"};
+      if("name" in tmplChunk){ahref.c = tmplChunk.name;}
+      if("href" in tmplChunk){ahref.href = tmplChunk.href;}
+      if("class" in tmplChunk){ahref.class = tmplChunk.class;}
+      if("id" in tmplChunk){ahref.id = tmplChunk.id;}
+      if("children" in tmplChunk || "chi" in tmplChunk || "img" in tmplChunk){ahref.chi = [];}
+      if("children" in tmplChunk) {tmplChunk.children.forEach(function(element){ahref.chi.push(element);});}
+      if("chi" in tmplChunk) {tmplChunk.chi.forEach(function(element){ahref.chi.push(element);});}
+      if("img" in tmplChunk){ahref.chi.push({tag:"img", src:tmplChunk.img});}
+      if(isEditor && "selectable" in tmplChunk){
+        //assumes that all selectable menu items have unique names
+        //and that there the name and func attributes are present and valid
+        ("class" in tmplChunk) ? ahref.class += " editor-item" : ahref.class = "editor-item";
+        ahref.id = "editor-" + tmplChunk.func + "-" + tmplChunk.name;
+        ahref.attr = " data-editor-func=\"" + tmplChunk.func + "\" data-editor-args=\"" + tmplChunk.name + "\" ";
+      }
+      return ahref;
     }
-    return icon;
-  };
-  NS.constructors.BaseParse.prototype.ahrefParse = function(tmplChunk, isEditor){
-    var ahref = {tag:"a"};
-    if("name" in tmplChunk){ahref.c = tmplChunk.name;}
-    if("href" in tmplChunk){ahref.href = tmplChunk.href;}
-    if("class" in tmplChunk){ahref.class = tmplChunk.class;}
-    if("id" in tmplChunk){ahref.id = tmplChunk.id;}
-    if("children" in tmplChunk || "chi" in tmplChunk || "img" in tmplChunk){ahref.chi = [];}
-    if("children" in tmplChunk) {tmplChunk.children.forEach(function(element){ahref.chi.push(element);});}
-    if("chi" in tmplChunk) {tmplChunk.chi.forEach(function(element){ahref.chi.push(element);});}
-    if("img" in tmplChunk){ahref.chi.push({tag:"img", src:tmplChunk.img});}
-    if(isEditor && "selectable" in tmplChunk){
-      //assumes that all selectable menu items have unique names
-      //and that there the name and func attribuews are present and valid
-      ("class" in tmplChunk) ? ahref.class += " editor-item" : ahref.class = "editor-item";
-      ahref.id = "editor-" + tmplChunk.func + "-" + tmplChunk.name;
-      ahref.attr = " data-editor-func=\"" + tmplChunk.func + "\" data-editor-args=\"" + tmplChunk.name + "\" ";
-    }
-    return ahref;
-  };
-  NS.baseParse = new NS.constructors.BaseParse;
+  });
 
   //parsingfunctions specific to constructing menus
-  NS.constructors.MenuFunctions = function(menuTmpl){
-    return this.menuCompile(menuTmpl);
-  };
-  NS.constructors.MenuFunctions.prototype = Object.create(NS.constructors.BaseParse.prototype);
-  NS.constructors.MenuFunctions.prototype.menuParse = function(omniChunk, tmplChunk){
-    for(var rep=0;rep<tmplChunk.length;rep++){
-      //if it's a divider
-      if("divider" in tmplChunk[rep]){omniChunk.push({tag:"li", class:"divider"});}
-      //if it's a regular menu element
-      else if("name" in tmplChunk[rep]){
-        var tempTag = {tag:"li", chi:[]};
-        tempTag.chi.push(this.ahrefParse(tmplChunk[rep], true));
-        //if there are sub-items
-        if("children" in tmplChunk[rep] && tmplChunk[rep].children.length != 0){
-          tempTag.class = "has-dropdown";
-          var tempDropdown = {tag:"ul",class:"dropdown", chi:[]};
-          var tempChildren = this.menuParse([], tmplChunk[rep].children);
-          for(var rep2=0;rep2<tempChildren.length;rep2++){
-            tempDropdown.chi.push(tempChildren[rep2]);
+  NS.MenuFunctions = NS.BaseParse.extend({
+    menuParse: function(omniChunk, tmplChunk){
+      for(var rep=0;rep<tmplChunk.length;rep++){
+        //if it's a divider
+        if("divider" in tmplChunk[rep]){omniChunk.push({tag:"li", class:"divider"});}
+        //if it's a regular menu element
+        else if("name" in tmplChunk[rep]){
+          var tempTag = {tag:"li", chi:[]};
+          tempTag.chi.push(this.ahrefParse(tmplChunk[rep], true));
+          //if there are sub-items
+          if("children" in tmplChunk[rep] && tmplChunk[rep].children.length != 0){
+            tempTag.class = "has-dropdown";
+            var tempDropdown = {tag:"ul",class:"dropdown", chi:[]};
+            var tempChildren = this.menuParse([], tmplChunk[rep].children);
+            for(var rep2=0;rep2<tempChildren.length;rep2++){
+              tempDropdown.chi.push(tempChildren[rep2]);
+            }
+            tempTag.chi.push(tempDropdown);
           }
-          tempTag.chi.push(tempDropdown);
+          omniChunk.push(tempTag);
         }
-        omniChunk.push(tempTag);
+        //font awesome handling
+        else if("icon" in tmplChunk[rep]){
+          omniChunk.push(this.iconParse(tmplChunk[rep], true));
+        }
       }
-      //font awesome handling
-      else if("icon" in tmplChunk[rep]){
-        omniChunk.push(this.iconParse(tmplChunk[rep], true));
-      }
-    }
-    return omniChunk;
-  };
+      return omniChunk;
+    },
+    menuCompile: function(iTemplate){
+      //create base div
+      var omniTemplate = {
+        tag:"div",
+        chi:[{
+          tag:"nav",
+          class:"top-bar",
+          chi:[]
+        }]};
+      //set if menu is floating, fixed or sticky
+      if(iTemplate.placement!=""){omniTemplate.class = iTemplate.placement;}
+      if(iTemplate.width=="full"){"class" in omniTemplate?omniTemplate.class += " contain-to-grid":omniTemplate.class = "contain-to-grid";}
+      if(iTemplate.clickable==true){omniTemplate.chi[0].attr = " data-options=\"is_hover:false\"";}
 
-  NS.constructors.MenuFunctions.prototype.menuCompile = function(iTemplate){
-    //create base div
-    var omniTemplate = {
-      tag:"div",
-      chi:[{
-        tag:"nav",
-        class:"top-bar",
+      //construct the menu title and mobile icon/bar
+      var mobileTitle = {
+        tag:"li",
+        class:"toggle-topbar",
+        chi:[]};
+      if(iTemplate.mobileIcon==true){mobileTitle.class += " menu-icon";}
+
+      var mobileLink = {tag:"a"};
+      if(iTemplate.mobileHref!=""){mobileLink.href = iTemplate.mobileHref;}
+      if(iTemplate.mobileName!=""){mobileLink.c = iTemplate.mobileName;}
+
+      mobileTitle.chi.push(mobileLink);
+
+      var titleContent = {tag:"a"};
+      if(iTemplate.title!=""){titleContent.c = iTemplate.title;}
+      if(iTemplate.titleHref!=""){titleContent.href = iTemplate.titleHref;}
+
+      var titleBar = {
+        tag:"ul",
+        class:"title-area",
+        chi:[]};
+      titleBar.chi.push({
+        tag:"li",
+        class:"name",
+        chi:[{tag:"h1", chi:[]}]
+      });
+      titleBar.chi[0].chi[0].chi.push(titleContent);
+      titleBar.chi.push(mobileTitle);
+
+      omniTemplate.chi[0].chi.push(titleBar);
+
+      var menuLeft = {
+        tag:"ul",
+        class:"left",
         chi:[]
-      }]};
-    //set if menu is floating, fixed or sticky
-    if(iTemplate.placement!=""){omniTemplate.class = iTemplate.placement;}
-    if(iTemplate.width=="full"){"class" in omniTemplate?omniTemplate.class += " contain-to-grid":omniTemplate.class = "contain-to-grid";}
-    if(iTemplate.clickable==true){omniTemplate.chi[0].attr = " data-options=\"is_hover:false\"";}
+      };
 
-    //construct the menu title and mobile icon/bar
-    var mobileTitle = {
-      tag:"li",
-      class:"toggle-topbar",
-      chi:[]};
-    if(iTemplate.mobileIcon==true){mobileTitle.class += " menu-icon";}
+      iTemplate.left.push(this.menuParse(menuLeft.chi, iTemplate.left));
 
-    var mobileLink = {tag:"a"};
-    if(iTemplate.mobileHref!=""){mobileLink.href = iTemplate.mobileHref;}
-    if(iTemplate.mobileName!=""){mobileLink.c = iTemplate.mobileName;}
+      var menuRight = {
+        tag:"ul",
+        class:"right",
+        chi:[]
+      };
 
-    mobileTitle.chi.push(mobileLink);
+      iTemplate.left.push(this.menuParse(menuRight.chi, iTemplate.right));
 
-    var titleContent = {tag:"a"};
-    if(iTemplate.title!=""){titleContent.c = iTemplate.title;}
-    if(iTemplate.titleHref!=""){titleContent.href = iTemplate.titleHref;}
-
-    var titleBar = {
-      tag:"ul",
-      class:"title-area",
-      chi:[]};
-    titleBar.chi.push({
-      tag:"li",
-      class:"name",
-      chi:[{tag:"h1", chi:[]}]
-    });
-    titleBar.chi[0].chi[0].chi.push(titleContent);
-    titleBar.chi.push(mobileTitle);
-
-    omniTemplate.chi[0].chi.push(titleBar);
-
-    var menuLeft = {
-      tag:"ul",
-      class:"left",
-      chi:[]
-    };
-
-    iTemplate.left.push(this.menuParse(menuLeft.chi, iTemplate.left));
-
-    var menuRight = {
-      tag:"ul",
-      class:"right",
-      chi:[]
-    };
-
-    iTemplate.left.push(this.menuParse(menuRight.chi, iTemplate.right));
-
-    omniTemplate.chi[0].chi.push({
-      tag:"section",
-      class:"top-bar-section",
-      chi:[menuLeft, menuRight]
-    });
-    return omniTemplate;
-  };
+      omniTemplate.chi[0].chi.push({
+        tag:"section",
+        class:"top-bar-section",
+        chi:[menuLeft, menuRight]
+      });
+      return omniTemplate;
+    },
+  });
 
   //parsing functions specific to standard Foundation 
-  NS.constructors.FoundationParse = function(){
+  NS.FoundationParse = NS.MenuFunctions.extend({
+    foundationCompile: function(iTemplate){return iTemplate;}
+  });
 
-  };
-  NS.constructors.FoundationParse.prototype = Object.create(NS.constructors.BaseParse.prototype);
+  NS.BuildPage = NS.FoundationParse.extend({
+    parse: function(iAttrs, options){
+      var attrs = {};
+      attrs.menu = [];
+      attrs.body = [];
+      attrs.funcs = {};
+      if("menuTemplate" in iAttrs){attrs.menu.push(this.menuCompile(iAttrs.menuTemplate));}
+      if("bodyTemplate" in iAttrs){attrs.body.push(this.foundationCompile(iAttrs.bodyTemplate));}
+      if("funcEvents" in iAttrs){attrs.funcs = iAttrs.funcEvents;}
+      return attrs;
+    },
+  });
+
 })(window.templateFunctions);
 
 window.templateData = {};
 templateData.mainData = {
-  mainContent:[
+  body:[
     {tag:"div",
     class:"row",
     chi:[
@@ -212,7 +220,7 @@ templateData.mainData = {
 };  //mainData
 
 templateData.artData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -260,7 +268,7 @@ templateData.artData = {
 }; //artData
 
 templateData.rainData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -305,7 +313,7 @@ templateData.rainData = {
 }; //rainData
 
 templateData.contactData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -361,7 +369,7 @@ templateData.contactData = {
 }; //contactData
 
 templateData.inspireData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -393,7 +401,7 @@ templateData.inspireData = {
 }; //dynamikData
 
 templateData.finnData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -428,7 +436,7 @@ templateData.finnData = {
 }; //finnData
 
 templateData.electronicsData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -446,7 +454,7 @@ templateData.electronicsData = {
 }; //electronicsData
 
 templateData.cvData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -539,7 +547,7 @@ templateData.cvData = {
 }; //cvData
 
 templateData.captchaRedData = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -555,7 +563,7 @@ templateData.captchaRedData = {
 };
 
 templateData.captchaVerifiedContent = {
-  mainContent: [
+  body: [
     {tag:"div",
     class:"row",
     chi:[
@@ -569,18 +577,8 @@ templateData.captchaVerifiedContent = {
   }],
 };
 
-templateData.EditorData = function(iMenu, iMain, iFunc){
-  this.menuContent = [];
-  this.menuContent.push(new templateFunctions.constructors.MenuFunctions(iMenu));
-  this.mainContent = [];
-  this.mainContent.push(iMain);
-  this.funcContent = iFunc;
-};
-templateData.EditorData.prototype = Object.create(templateFunctions.constructors.MenuFunctions.prototype);
-
-
-templateData.editorData = new templateData.EditorData(
-  {
+templateData.editorData = new templateFunctions.BuildPage({
+  menuTemplate:{
     placement:"",
     width:"full",
     clickable:"true",
@@ -1133,11 +1131,11 @@ templateData.editorData = new templateData.EditorData(
     ],
     right:[],
   },
-  {
+  bodyTemplate:{
     tag:"div",
     id:"editor-workarea"
   },
-  {
+  funcEvents:{
     edit: function(iEvent){
       var editorArgs = iEvent.currentTarget.dataset.editorArgs;
       console.log(editorArgs);
@@ -1153,7 +1151,7 @@ templateData.editorData = new templateData.EditorData(
 
     },
   }
-);
+},{parse:true});
 
 //populates the captchaRedData structure
 (function(){
@@ -1183,6 +1181,6 @@ templateData.editorData = new templateData.EditorData(
         }]
       });
     }
-    templateData.captchaRedData.mainContent.push(row);
+    templateData.captchaRedData.body.push(row);
   }
 })();
