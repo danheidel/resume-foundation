@@ -52,6 +52,12 @@ canvas{
    padding: .2em; 
    border-radius: 4px 4px 4px 4px;
 }
+.panel-lt-grey{ 
+   margin: .2em;
+   padding: .2em; 
+   border-radius: 4px 4px 4px 4px;
+   background: #888;
+}
 .panel.clear{
    border: solid transparent;
    background: none;

@@ -176,8 +176,6 @@ templateData.mainData = {
         {tag:"p",content: "Hey there! C'mon in, poke around."},
         {htag:"br"},
         {tag:"p", c:"Over the last several years, I've done and made some cool stuff.  It has occurred to me that people might, at some point be interested in seeing some of that stuff."},
-        {tag:"p", c:"So here you go:"},
-
       ]},
       {panel: " ",
       colClass:"large-4",

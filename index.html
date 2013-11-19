@@ -72,7 +72,7 @@
               </ul>
             </li>
             <li><a href="#cv" class="menu-item">CV</a></li>
-            <li><a href="#editor" class="menu-item">Editor</a></li>
+            <!--<li><a href="#editor" class="menu-item">Editor</a></li>-->
           </ul>
 
           <ul class="right">
@@ -130,6 +130,7 @@
   <script>window.Handlebars || document.write('<script src="js/vendor/handlebars-1.0.0.js"><\/script')</script>
   <!-- -->
 
+  <script src='js/vendor/d3.v3.js'></script>
   <script src="js/foundation/foundation.js"></script>
   <!--
   <script src="js/foundation.min.js"></script>
@@ -245,6 +246,12 @@
     });
 
     pageVars.captchaView = new oCaptchaView;
+    
+    var StarModel = Backbone.Model.extend();
+    var StarCollection = Backbone.Collection.extend({
+      model: StarModel,
+      url: '../api/stardist/3',
+    });
 
     var oRouter = Backbone.Router.extend({
       routes: {
